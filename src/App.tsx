@@ -1,25 +1,30 @@
 import './App.css';
 import { Component } from 'react';
+import Search from './components/Search';
 
-type Person = {
+type Character = {
+  id: number;
   name: string;
-  birth_year: string;
+  status: string;
+  species: string;
   gender: string;
-  height: string;
-  mass: string;
+  image: string;
 };
 
-// type SwapiResponse = {
-//   count: number;
-//   next: string | null;
-//   previous: string | null;
-//   results: Person[];
-// };
+type RMResponse = {
+  info: {
+    count: number;
+    pages: number;
+    next: string | null;
+    prev: string | null;
+  };
+  results: Character[];
+};
 
 type AppState = {
   searchTerm: string;
   loading: boolean;
-  results: Person[];
+  results: Character[];
   error: string | null;
 };
 
@@ -44,20 +49,25 @@ class App extends Component<object, AppState> {
   fetchData = (term: string) => {
     const query = term.trim().toLowerCase();
 
-    const baseUrl = `https://swapi.info/api/people`;
-    const url = query ? `${baseUrl}/?search=${query}` : baseUrl;
+    const url = query
+      ? `https://rickandmortyapi.com/api/character/?name=${query}`
+      : `https://rickandmortyapi.com/api/character`;
 
     this.setState({ loading: true, error: null });
 
     fetch(url)
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Character not found');
         }
         return response.json();
       })
-      .then((data: Person[]) => {
-        this.setState({ results: data, loading: false });
+      .then((data: RMResponse) => {
+        this.setState({
+          results: data.results,
+          searchTerm: term,
+          loading: false,
+        });
       })
       .catch((error) => {
         this.setState({ error: error.message, loading: false });
@@ -68,24 +78,33 @@ class App extends Component<object, AppState> {
     const { searchTerm, results, loading, error } = this.state;
 
     return (
-      <div>
-        <h1>Star Wars Characters</h1>
-        <p>
-          Search Term: <strong>{searchTerm}</strong>
-        </p>
+      <>
+        <Search onSearch={this.fetchData} />
+         <div>
+          <h1>Rick and Morty Characters</h1> {/* ✅ CHANGED title */}
 
-        {loading && <p>Loading...</p>}
-        {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+          <p>
+            Search Term: <strong>{searchTerm}</strong>
+          </p>
 
-        <ul>
-          {results.map((person) => (
-            <li key={person.name}>
-              <strong>{person.name}</strong> - {person.birth_year},{' '}
-              {person.gender}
-            </li>
-          ))}
-        </ul>
-      </div>
+          {loading && <p>Loading...</p>}
+          {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {results.map((char) => (
+              <li key={char.id} style={{ marginBottom: '12px' }}>
+                <img
+                  src={char.image}
+                  alt={char.name}
+                  width="50"
+                  style={{ verticalAlign: 'middle', marginRight: '10px' }}
+                />
+                <strong>{char.name}</strong> – {char.species}, {char.gender}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </>
     );
   }
 }
