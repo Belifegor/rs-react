@@ -9,12 +9,12 @@ type Person = {
   mass: string;
 };
 
-type SwapiResponse = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Person[];
-};
+// type SwapiResponse = {
+//   count: number;
+//   next: string | null;
+//   previous: string | null;
+//   results: Person[];
+// };
 
 type AppState = {
   searchTerm: string;
@@ -56,8 +56,8 @@ class App extends Component<object, AppState> {
         }
         return response.json();
       })
-      .then((data: SwapiResponse) => {
-        this.setState({ results: data.results, loading: false });
+      .then((data: Person[]) => {
+        this.setState({ results: data, loading: false });
       })
       .catch((error) => {
         this.setState({ error: error.message, loading: false });
@@ -80,7 +80,7 @@ class App extends Component<object, AppState> {
         <ul>
           {results.map((person) => (
             <li key={person.name}>
-              <strong>{person.name}</strong> — {person.birth_year},{' '}
+              <strong>{person.name}</strong> - {person.birth_year},{' '}
               {person.gender}
             </li>
           ))}
