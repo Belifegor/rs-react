@@ -26,6 +26,8 @@ type AppState = {
   loading: boolean;
   results: Character[];
   error: string | null;
+  nextPage: string | null;
+  prevPage: string | null;
 };
 
 class App extends Component<object, AppState> {
@@ -36,6 +38,8 @@ class App extends Component<object, AppState> {
       loading: false,
       results: [],
       error: null,
+      nextPage: null,
+      prevPage: null,
     };
   }
 
@@ -66,6 +70,31 @@ class App extends Component<object, AppState> {
         this.setState({
           results: data.results,
           searchTerm: term,
+          nextPage: data.info.next,
+          prevPage: data.info.prev,
+          loading: false,
+        });
+      })
+      .catch((error) => {
+        this.setState({ error: error.message, loading: false });
+      });
+  };
+
+  fetchPage = (url: string) => {
+    this.setState({ loading: true, error: null });
+
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch page');
+        }
+        return response.json();
+      })
+      .then((data: RMResponse) => {
+        this.setState({
+          results: data.results,
+          nextPage: data.info.next,
+          prevPage: data.info.prev,
           loading: false,
         });
       })
@@ -80,16 +109,13 @@ class App extends Component<object, AppState> {
     return (
       <>
         <Search onSearch={this.fetchData} />
-         <div>
-          <h1>Rick and Morty Characters</h1> {/* ✅ CHANGED title */}
-
+        <div>
+          <h1>Rick and Morty Characters</h1>
           <p>
             Search Term: <strong>{searchTerm}</strong>
           </p>
-
           {loading && <p>Loading...</p>}
           {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {results.map((char) => (
               <li key={char.id} style={{ marginBottom: '12px' }}>
@@ -103,6 +129,31 @@ class App extends Component<object, AppState> {
               </li>
             ))}
           </ul>
+          <div style={{ marginTop: '1rem' }}>
+            {this.state.prevPage && (
+              <button
+                onClick={() => {
+                  if (this.state.prevPage) {
+                    this.fetchPage(this.state.prevPage);
+                  }
+                }}
+              >
+                Previous
+              </button>
+            )}
+            {this.state.nextPage && (
+              <button
+                onClick={() => {
+                  if (this.state.nextPage) {
+                    this.fetchPage(this.state.nextPage);
+                  }
+                }}
+                style={{ marginLeft: '10px' }}
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
       </>
     );
