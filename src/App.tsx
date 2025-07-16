@@ -28,6 +28,7 @@ type AppState = {
   error: string | null;
   nextPage: string | null;
   prevPage: string | null;
+  hasError: boolean;
 };
 
 class App extends Component<object, AppState> {
@@ -40,6 +41,7 @@ class App extends Component<object, AppState> {
       error: null,
       nextPage: null,
       prevPage: null,
+      hasError: false,
     };
   }
 
@@ -80,6 +82,10 @@ class App extends Component<object, AppState> {
       });
   };
 
+  throwError = () => {
+    this.setState({ hasError: true });
+  };
+
   fetchPage = (url: string) => {
     this.setState({ loading: true, error: null });
 
@@ -106,6 +112,10 @@ class App extends Component<object, AppState> {
   render() {
     const { searchTerm, results, loading, error } = this.state;
 
+    if (this.state.hasError) {
+      throw new Error('Simulate error');
+    }
+
     return (
       <>
         <Search onSearch={this.fetchData} />
@@ -129,6 +139,20 @@ class App extends Component<object, AppState> {
               </li>
             ))}
           </ul>
+          <button
+            onClick={this.throwError}
+            style={{
+              marginTop: '20px',
+              padding: '8px 16px',
+              backgroundColor: 'crimson',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Simulate Error
+          </button>
           <div style={{ marginTop: '1rem' }}>
             {this.state.prevPage && (
               <button
