@@ -120,25 +120,32 @@ class App extends Component<object, AppState> {
       <>
         <Search onSearch={this.fetchData} />
         <div>
-          <h1>Rick and Morty Characters</h1>
-          <p>
+          <h1 className='mb-4'>Rick and Morty Characters</h1>
+          <p className='mb-4 text-2xl text-stone-300'>
             Search Term: <strong>{searchTerm}</strong>
           </p>
           {loading && <p>Loading...</p>}
           {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
             {results.map((char) => (
-              <li key={char.id} style={{ marginBottom: '12px' }}>
+              <div
+                key={char.id}
+                className="bg-gray-700 shadow-md rounded-lg p-4 flex flex-col items-center"
+              >
                 <img
                   src={char.image}
                   alt={char.name}
-                  width="50"
-                  style={{ verticalAlign: 'middle', marginRight: '10px' }}
+                  className="w-32 h-32 object-cover rounded-full mb-4"
                 />
-                <strong>{char.name}</strong> – {char.species}, {char.gender}
-              </li>
+                <h2 className="text-lg font-semibold text-center text-stone-300">
+                  {char.name}
+                </h2>
+                <p className="text-sm text-stone-400 text-center">
+                  {char.species}, {char.gender}
+                </p>
+              </div>
             ))}
-          </ul>
+          </div>
           <button
             onClick={this.throwError}
             style={{
