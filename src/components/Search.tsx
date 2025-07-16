@@ -2,6 +2,7 @@ import { Component } from 'react';
 
 type Props = {
   onSearch: (query: string) => void;
+  initialValue: string;
 };
 
 type State = {
@@ -10,7 +11,7 @@ type State = {
 
 class Search extends Component<Props, State> {
   state: State = {
-    inputValue: '',
+    inputValue: this.props.initialValue,
   };
 
   handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

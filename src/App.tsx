@@ -55,6 +55,8 @@ class App extends Component<object, AppState> {
   fetchData = (term: string) => {
     const query = term.trim().toLowerCase();
 
+    localStorage.setItem('search', query);
+
     const url = query
       ? `https://rickandmortyapi.com/api/character/?name=${query}`
       : `https://rickandmortyapi.com/api/character`;
@@ -118,10 +120,13 @@ class App extends Component<object, AppState> {
 
     return (
       <>
-        <Search onSearch={this.fetchData} />
+        <Search
+          onSearch={this.fetchData}
+          initialValue={this.state.searchTerm}
+        />
         <div>
-          <h1 className='mb-4'>Rick and Morty Characters</h1>
-          <p className='mb-4 text-2xl text-stone-300'>
+          <h1 className="mb-4">Rick and Morty Characters</h1>
+          <p className="mb-4 text-2xl text-stone-300">
             Search Term: <strong>{searchTerm}</strong>
           </p>
           {loading && <p>Loading...</p>}
