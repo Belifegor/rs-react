@@ -1,4 +1,4 @@
-import './App.css';
+import '../src/assets/styles/App.css';
 import { Component } from 'react';
 import Search from './components/Search';
 import type { AppState } from './types/types';
@@ -86,7 +86,7 @@ class App extends Component<object, AppState> {
           </p>
           {loading && <p>Loading...</p>}
           {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-4 sm:gap-6">
             {results.map((char) => (
               <div
                 key={char.id}
