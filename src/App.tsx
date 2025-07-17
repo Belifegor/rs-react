@@ -1,35 +1,8 @@
 import './App.css';
 import { Component } from 'react';
 import Search from './components/Search';
-
-type Character = {
-  id: number;
-  name: string;
-  status: string;
-  species: string;
-  gender: string;
-  image: string;
-};
-
-type RMResponse = {
-  info: {
-    count: number;
-    pages: number;
-    next: string | null;
-    prev: string | null;
-  };
-  results: Character[];
-};
-
-type AppState = {
-  searchTerm: string;
-  loading: boolean;
-  results: Character[];
-  error: string | null;
-  nextPage: string | null;
-  prevPage: string | null;
-  hasError: boolean;
-};
+import type { AppState } from './types/types';
+import { fetchCharacters, fetchPageData } from './api/rickAndMorty';
 
 class App extends Component<object, AppState> {
   constructor(props: object) {
@@ -54,23 +27,12 @@ class App extends Component<object, AppState> {
 
   fetchData = (term: string) => {
     const query = term.trim().toLowerCase();
-
     localStorage.setItem('search', query);
-
-    const url = query
-      ? `https://rickandmortyapi.com/api/character/?name=${query}`
-      : `https://rickandmortyapi.com/api/character`;
 
     this.setState({ loading: true, error: null });
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Character not found');
-        }
-        return response.json();
-      })
-      .then((data: RMResponse) => {
+    fetchCharacters(query)
+      .then((data) => {
         this.setState({
           results: data.results,
           searchTerm: term,
@@ -84,21 +46,11 @@ class App extends Component<object, AppState> {
       });
   };
 
-  throwError = () => {
-    this.setState({ hasError: true });
-  };
-
   fetchPage = (url: string) => {
     this.setState({ loading: true, error: null });
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch page');
-        }
-        return response.json();
-      })
-      .then((data: RMResponse) => {
+    fetchPageData(url)
+      .then((data) => {
         this.setState({
           results: data.results,
           nextPage: data.info.next,
@@ -109,6 +61,9 @@ class App extends Component<object, AppState> {
       .catch((error) => {
         this.setState({ error: error.message, loading: false });
       });
+  };
+  throwError = () => {
+    this.setState({ hasError: true });
   };
 
   render() {
@@ -153,15 +108,7 @@ class App extends Component<object, AppState> {
           </div>
           <button
             onClick={this.throwError}
-            style={{
-              marginTop: '20px',
-              padding: '8px 16px',
-              backgroundColor: 'crimson',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
+            className="mt-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
           >
             Simulate Error
           </button>

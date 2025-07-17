@@ -1,16 +1,8 @@
 import { Component } from 'react';
+import type { PropsSearch, StateSearch } from '../types/types';
 
-type Props = {
-  onSearch: (query: string) => void;
-  initialValue: string;
-};
-
-type State = {
-  inputValue: string;
-};
-
-class Search extends Component<Props, State> {
-  state: State = {
+class Search extends Component<PropsSearch, StateSearch> {
+  state: StateSearch = {
     inputValue: this.props.initialValue,
   };
 

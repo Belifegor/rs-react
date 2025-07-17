@@ -1,22 +1,14 @@
 import { Component } from 'react';
 import type { ReactNode } from 'react';
+import type { PropsError, StateError } from '../types/types';
 
-type Props = {
-  children: ReactNode;
-  fallback: ReactNode;
-};
-
-type State = {
-  hasError: boolean;
-};
-
-class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+class ErrorBoundary extends Component<PropsError, StateError> {
+  constructor(props: PropsError) {
     super(props);
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(): State {
+  static getDerivedStateFromError(): StateError {
     return { hasError: true };
   }
 
