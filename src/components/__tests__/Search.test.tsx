@@ -11,20 +11,20 @@ describe('Search Component', () => {
     render(<Search initialValue="" onSearch={mockOnSearch} />);
   });
 
-  it('renders input and button', () => {
+  it('render input and button', () => {
     expect(
       screen.getByPlaceholderText('Search for a character...')
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
   });
 
-  it('updates input value on typing', async () => {
+  it('update input value on typing', async () => {
     const input = screen.getByPlaceholderText('Search for a character...');
     await userEvent.type(input, 'Morty');
     expect(input).toHaveValue('Morty');
   });
 
-  it('calls onSearch with correct value on submit', async () => {
+  it('call onSearch with correct value on submit', async () => {
     const input = screen.getByPlaceholderText('Search for a character...');
     const button = screen.getByRole('button', { name: 'Search' });
 
