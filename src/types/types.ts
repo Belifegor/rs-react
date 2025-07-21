@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 export type PropsError = {
   children: ReactNode;
-  fallback: ReactNode;
+  fallback?: ReactNode;
 };
 
 export type StateError = {
