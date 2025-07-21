@@ -2,6 +2,7 @@ import '../src/assets/styles/App.css';
 import { Component } from 'react';
 import Search from './components/Search';
 import type { AppState } from './types/types';
+import Card from './components/Card';
 import { fetchCharacters, fetchPageData } from './api/rickAndMorty';
 
 class App extends Component<object, AppState> {
@@ -88,22 +89,7 @@ class App extends Component<object, AppState> {
           {error && <p style={{ color: 'red' }}>Error: {error}</p>}
           <div className="grid grid-cols-1 sm:grid-cols-4 sm:gap-6">
             {results.map((char) => (
-              <div
-                key={char.id}
-                className="bg-gray-700 shadow-md rounded-lg p-4 flex flex-col items-center"
-              >
-                <img
-                  src={char.image}
-                  alt={char.name}
-                  className="w-32 h-32 object-cover rounded-full mb-4"
-                />
-                <h2 className="text-lg font-semibold text-center text-stone-300">
-                  {char.name}
-                </h2>
-                <p className="text-sm text-stone-400 text-center">
-                  {char.species}, {char.gender}
-                </p>
-              </div>
+              <Card key={char.id} character={char} />
             ))}
           </div>
           <button
