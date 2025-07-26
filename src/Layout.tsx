@@ -7,9 +7,10 @@ import Card from './components/Card';
 import { fetchCharacters } from './api/rickAndMorty';
 import { usePagination } from './hooks/usePagination';
 import { Pagination } from './components/Pagination';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 export default function App() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Character[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -19,13 +20,6 @@ export default function App() {
   const { page = '1', detailsId } = useParams();
 
   const { paginationRange } = usePagination(totalPages);
-
-  useEffect(() => {
-    const savedTerm = localStorage.getItem('search') ?? '';
-    if (!searchTerm && savedTerm) {
-      setSearchTerm(savedTerm);
-    }
-  }, [searchTerm]);
 
   useEffect(() => {
     const query = searchTerm.trim().toLowerCase();
