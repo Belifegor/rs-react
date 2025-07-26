@@ -1,7 +1,6 @@
 import '../src/assets/styles/App.css';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import { useNavigate } from 'react-router';
+import { useParams, useNavigate, Outlet } from 'react-router';
 import Search from './components/Search';
 import type { Character } from './types/types';
 import Card from './components/Card';
@@ -16,8 +15,6 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // const page = searchParams.get('page') ?? '1';
   const navigate = useNavigate();
   const { page = '1', detailsId } = useParams();
 
@@ -69,35 +66,47 @@ export default function App() {
   }
   return (
     <>
-      <Search onSearch={handleSearch} initialValue={searchTerm} />
-      <div>
-        <h1 className="mb-4">Rick and Morty Characters</h1>
-        <p className="mb-4 text-2xl text-stone-300">
-          Search Term: <strong>{searchTerm}</strong>
-        </p>
+      <div className="flex gap-4">
+        <div className="w-full sm:w-2/3">
+          <Search onSearch={handleSearch} initialValue={searchTerm} />
+          <div>
+            <h1 className="mb-4">Rick and Morty Characters</h1>
+            <p className="mb-4 text-2xl text-stone-300">
+              Search Term: <strong>{searchTerm}</strong>
+            </p>
 
-        {loading && <p>Loading...</p>}
-        {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+            {loading && <p>Loading...</p>}
+            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 sm:gap-6">
-          {results.map((char) => (
-            <Card key={char.id} character={char} />
-          ))}
+            <div className="grid grid-cols-1 sm:grid-cols-4 sm:gap-6">
+              {results.map((char) => (
+                <Card key={char.id} character={char} />
+              ))}
+            </div>
+
+            {!loading && !error && results.length > 0 && (
+              <Pagination
+                currentPage={parseInt(page)}
+                paginationRange={paginationRange}
+                onPageChange={goToPage}
+              />
+            )}
+
+            <button
+              onClick={() => setHasError(true)}
+              className="mt-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              Simulate Error
+            </button>
+          </div>
         </div>
-        {!loading && !error && results.length > 0 && (
-          <Pagination
-            currentPage={parseInt(page)}
-            paginationRange={paginationRange}
-            onPageChange={goToPage}
-          />
+
+        {detailsId && (
+          <div className="w-full sm:w-1/3">
+            <Outlet />
+          </div>
         )}
       </div>
-      <button
-        onClick={() => setHasError(true)}
-        className="mt-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-      >
-        Simulate Error
-      </button>
     </>
   );
 }
