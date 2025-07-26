@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import type { Character } from '../types/types';
 
 export default function Details() {
-  const { detailsId } = useParams();
+  const navigate = useNavigate();
+  const { detailsId, page = '1' } = useParams();
 
   const [character, setCharacter] = useState<Character | null>(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,14 @@ export default function Details() {
   if (!character) return null;
 
   return (
-    <div className="p-4 border-l bg-gray-700">
+    <div className="p-4 border-l bg-gray-700 relative">
+      <button
+        className="absolute top-2 right-2 bg-gray-800 rounded px-3 py-1 text-white hover:bg-gray-600"
+        onClick={() => navigate(`/${page}`)}
+        title="Close details"
+      >
+        ×
+      </button>
       <h2 className="text-xl font-bold mb-2">{character.name}</h2>
       <img
         src={character.image}
