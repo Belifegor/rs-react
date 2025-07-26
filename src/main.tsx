@@ -9,11 +9,11 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <ErrorBoundary fallback={<p>Something went wrong</p>}>
-        <BrowserRouter>
+      <BrowserRouter>
+        <ErrorBoundary>
           <App />
-        </BrowserRouter>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </BrowserRouter>
     </StrictMode>
   );
 }
