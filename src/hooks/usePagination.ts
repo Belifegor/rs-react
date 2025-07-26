@@ -1,34 +1,32 @@
 import { useMemo } from 'react';
-import { useSearchParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 export const usePagination = (totalPages: number) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = parseInt(searchParams.get('page') ?? '1');
+  const navigate = useNavigate();
+  const { page = '1' } = useParams();
+  const currentPage = parseInt(page);
 
-  const goToPage = (page: number) => {
-    setSearchParams({ page: page.toString() });
+  const goToPage = (newPage: number) => {
+    navigate(`/${newPage}`);
   };
 
   const paginationRange = useMemo(() => {
     const range: (number | string)[] = [];
-    let addedLeftDots = false;
-    let addedRightDots = false;
+    const delta = 1;
+    const left = Math.max(2, currentPage - delta);
+    const right = Math.min(totalPages - 1, currentPage + delta);
 
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - 1 && i <= currentPage + 2)
-      ) {
-        range.push(i);
-      } else if (i < currentPage && !addedLeftDots) {
-        range.push('...');
-        addedLeftDots = true;
-      } else if (i > currentPage && !addedRightDots) {
-        range.push('...');
-        addedRightDots = true;
-      }
+    range.push(1);
+
+    if (left > 2) range.push('...');
+
+    for (let i = left; i <= right; i++) {
+      range.push(i);
     }
+
+    if (right < totalPages - 1) range.push('...');
+
+    if (totalPages > 1) range.push(totalPages);
 
     return range;
   }, [currentPage, totalPages]);

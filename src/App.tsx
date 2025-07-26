@@ -1,6 +1,7 @@
 import '../src/assets/styles/App.css';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import Search from './components/Search';
 import type { Character } from './types/types';
 import Card from './components/Card';
@@ -13,9 +14,12 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Character[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get('page') ?? '1';
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // const page = searchParams.get('page') ?? '1';
+  const navigate = useNavigate();
+  const { page = '1', detailsId } = useParams();
 
   const { paginationRange } = usePagination(totalPages);
 
@@ -28,7 +32,7 @@ export default function App() {
 
   useEffect(() => {
     const query = searchTerm.trim().toLowerCase();
-    fetchData(query, page);
+    if (query) fetchData(query, page || '1');
   }, [searchTerm, page]);
 
   const fetchData = (term: string, page: string) => {
@@ -48,17 +52,21 @@ export default function App() {
       });
   };
 
-  const goToPage = (newPage: string) => {
-    setSearchParams({ page: newPage });
+  const goToPage = (newPage: number) => {
+    const newPath = detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`;
+    navigate(newPath);
   };
 
   const handleSearch = (term: string) => {
     const cleane = term.trim().toLowerCase();
     localStorage.setItem('search', cleane);
     setSearchTerm(cleane);
-    setSearchParams({ page: '1' });
+    navigate(`/1`);
   };
 
+  if (hasError) {
+    throw new Error('Simulated error');
+  }
   return (
     <>
       <Search onSearch={handleSearch} initialValue={searchTerm} />
@@ -76,12 +84,20 @@ export default function App() {
             <Card key={char.id} character={char} />
           ))}
         </div>
-        <Pagination
-          currentPage={parseInt(page)}
-          paginationRange={paginationRange}
-          onPageChange={(newPage) => goToPage(newPage.toString())}
-        />
+        {!loading && !error && results.length > 0 && (
+          <Pagination
+            currentPage={parseInt(page)}
+            paginationRange={paginationRange}
+            onPageChange={goToPage}
+          />
+        )}
       </div>
+      <button
+        onClick={() => setHasError(true)}
+        className="mt-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+      >
+        Simulate Error
+      </button>
     </>
   );
 }
