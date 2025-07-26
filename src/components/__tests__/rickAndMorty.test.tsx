@@ -29,7 +29,7 @@ describe('rickAndMorty API', () => {
       const data = await fetchCharacters('Rick');
 
       expect(fetch).toHaveBeenCalledWith(
-        'https://rickandmortyapi.com/api/character/?name=rick'
+        'https://rickandmortyapi.com/api/character/?name=rick&page=1'
       );
       expect(data).toEqual(fakeData);
     });

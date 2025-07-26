@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MockedFunction } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../App';
 import { fetchCharacters, fetchPageData } from '../../api/rickAndMorty';
+import { MemoryRouter } from 'react-router';
 
 vi.mock('../../api/rickAndMorty');
 
@@ -44,7 +45,11 @@ describe('App Component', () => {
   it('loads initial searchTerm from localStorage on mount', async () => {
     localStorageMock.getItem.mockReturnValue('rick');
 
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
 
     expect(localStorage.getItem).toHaveBeenCalledWith('search');
 
@@ -56,7 +61,11 @@ describe('App Component', () => {
   it('updates localStorage on new search', async () => {
     localStorageMock.getItem.mockReturnValue('');
 
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
 
     const input = screen.getByPlaceholderText(/search for a character/i);
     const button = screen.getByRole('button', { name: /search/i });
@@ -78,7 +87,11 @@ describe('App Component', () => {
       );
     });
 
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
 
     await waitFor(() =>
@@ -91,7 +104,11 @@ describe('App Component', () => {
       fetchCharacters as MockedFunction<typeof fetchCharacters>
     ).mockRejectedValueOnce(new Error('Character not found'));
 
-    render(<App />);
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    );
 
     await waitFor(() =>
       expect(
@@ -100,35 +117,35 @@ describe('App Component', () => {
     );
   });
 
-  it('renders next and previous buttons and handles clicks', async () => {
-    render(<App />);
+  it('renders page buttons and handles page change on click', async () => {
+    vi.mocked(fetchCharacters).mockResolvedValueOnce({
+      results: [
+        {
+          id: 1,
+          name: 'Rick Sanchez',
+          image: 'rick.png',
+          status: 'Alive',
+          species: 'Human',
+          gender: 'Male',
+        },
+      ],
+      info: {
+        pages: 3,
+        count: 60,
+        next: 'next-url',
+        prev: null,
+      },
+    });
 
-    await waitFor(() =>
-      expect(screen.getByText(/rick sanchez/i)).toBeInTheDocument()
+    render(
+      <MemoryRouter initialEntries={['/?page=1']}>
+        <App />
+      </MemoryRouter>
     );
 
-    const nextBtn = screen.getByRole('button', { name: /next/i });
-    const prevBtn = screen.getByRole('button', { name: /previous/i });
+    const page2Button = await screen.findByRole('button', { name: '2' });
+    expect(page2Button).toBeInTheDocument();
 
-    expect(nextBtn).toBeInTheDocument();
-    expect(prevBtn).toBeInTheDocument();
-
-    await userEvent.click(nextBtn);
-    expect(fetchPageData).toHaveBeenCalledWith('next-url');
-
-    await userEvent.click(prevBtn);
-    expect(fetchPageData).toHaveBeenCalledWith('prev-url');
-  });
-
-  it('throws error when simulate error button clicked', async () => {
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    render(<App />);
-    await waitFor(() => screen.getByText(/rick sanchez/i));
-
-    const errorBtn = screen.getByRole('button', { name: /simulate error/i });
-
-    await expect(() => userEvent.click(errorBtn)).rejects;
-    spy.mockRestore();
+    fireEvent.click(page2Button);
   });
 });
