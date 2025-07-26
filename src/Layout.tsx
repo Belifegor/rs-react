@@ -58,41 +58,48 @@ export default function App() {
   if (hasError) {
     throw new Error('Simulated error');
   }
+
+  const leftPanelClass = detailsId
+    ? 'w-full sm:w-2/3 transition-all duration-300'
+    : 'w-full flex flex-col items-center justify-center transition-all duration-300';
+
+  const gridClass =
+    'grid grid-cols-1 sm:grid-cols-4 gap-6 w-full max-w-5xl mx-auto';
+
   return (
     <>
-      <div className="flex gap-4">
-        <div className="w-full sm:w-2/3">
+      <div className="flex gap-4 min-h-screen">
+        <div className={leftPanelClass}>
           <Search onSearch={handleSearch} initialValue={searchTerm} />
-          <div>
-            <h1 className="mb-4">Rick and Morty Characters</h1>
-            <p className="mb-4 text-2xl text-stone-300">
-              Search Term: <strong>{searchTerm}</strong>
-            </p>
 
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+          <h1 className="mb-4">Rick and Morty Characters</h1>
+          <p className="mb-4 text-2xl text-stone-300">
+            Search Term: <strong>{searchTerm}</strong>
+          </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-4 sm:gap-6">
-              {results.map((char) => (
-                <Card key={char.id} character={char} />
-              ))}
-            </div>
+          {loading && <p>Loading...</p>}
+          {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-            {!loading && !error && results.length > 0 && (
-              <Pagination
-                currentPage={parseInt(page)}
-                paginationRange={paginationRange}
-                onPageChange={goToPage}
-              />
-            )}
-
-            <button
-              onClick={() => setHasError(true)}
-              className="mt-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-            >
-              Simulate Error
-            </button>
+          <div className={gridClass}>
+            {results.map((char) => (
+              <Card key={char.id} character={char} />
+            ))}
           </div>
+
+          {!loading && !error && results.length > 0 && (
+            <Pagination
+              currentPage={parseInt(page)}
+              paginationRange={paginationRange}
+              onPageChange={goToPage}
+            />
+          )}
+
+          <button
+            onClick={() => setHasError(true)}
+            className="mt-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            Simulate Error
+          </button>
         </div>
 
         {detailsId && (
