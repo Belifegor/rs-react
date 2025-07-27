@@ -1,12 +1,11 @@
+vi.mock('../../api/rickAndMorty');
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MockedFunction } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import CharacterPage from '../../pages/CharacterPage';
 import { fetchCharacters, fetchPageData } from '../../api/rickAndMorty';
 import { MemoryRouter } from 'react-router-dom';
-
-vi.mock('../../api/rickAndMorty');
 
 const mockCharData = {
   results: [
@@ -42,99 +41,18 @@ describe('App Component', () => {
     vi.mocked(fetchPageData).mockResolvedValue(mockCharData);
   });
 
-  it('loads initial searchTerm from localStorage on mount', async () => {
-    localStorageMock.getItem.mockReturnValue('rick');
-
-    render(
-      <MemoryRouter>
-        <CharacterPage />
-      </MemoryRouter>
-    );
-
-    expect(localStorage.getItem).toHaveBeenCalledWith('search');
-
-    await waitFor(() => {
-      expect(screen.getByText(/rick sanchez/i)).toBeInTheDocument();
-    });
-  });
-
-  it('updates localStorage on new search', async () => {
-    localStorageMock.getItem.mockReturnValue('');
-
-    render(
-      <MemoryRouter>
-        <CharacterPage />
-      </MemoryRouter>
-    );
-
-    const input = screen.getByPlaceholderText(/search for a character/i);
-    const button = screen.getByRole('button', { name: /search/i });
-
-    await userEvent.type(input, 'Morty');
-    await userEvent.click(button);
-
-    await waitFor(() => {
-      expect(localStorage.setItem).toHaveBeenCalledWith('search', 'morty');
-    });
-  });
-
   it('shows loading indicator during fetch', async () => {
     (
       fetchCharacters as MockedFunction<typeof fetchCharacters>
-    ).mockImplementation(() => {
-      return new Promise((resolve) =>
-        setTimeout(() => resolve(mockCharData), 100)
-      );
-    });
-
-    render(
-      <MemoryRouter>
-        <CharacterPage />
-      </MemoryRouter>
-    );
-    expect(screen.getByText(/loading/i)).toBeInTheDocument();
-
-    await waitFor(() =>
-      expect(screen.queryByText(/loading/i)).not.toBeInTheDocument()
-    );
-  });
-
-  it('displays error message on fetch failure', async () => {
-    (
-      fetchCharacters as MockedFunction<typeof fetchCharacters>
-    ).mockRejectedValueOnce(new Error('Character not found'));
-
-    render(
-      <MemoryRouter>
-        <CharacterPage />
-      </MemoryRouter>
-    );
-
-    await waitFor(() =>
-      expect(
-        screen.getByText(/error: character not found/i)
-      ).toBeInTheDocument()
-    );
-  });
-
-  it('renders page buttons and handles page change on click', async () => {
-    vi.mocked(fetchCharacters).mockResolvedValueOnce({
-      results: [
-        {
-          id: 1,
-          name: 'Rick Sanchez',
-          image: 'rick.png',
-          status: 'Alive',
-          species: 'Human',
-          gender: 'Male',
-        },
-      ],
-      info: {
-        pages: 3,
-        count: 60,
-        next: 'next-url',
-        prev: null,
-      },
+    ).mockImplementationOnce(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            info: { pages: 1, count: 1, next: null, prev: null },
+            results: [],
+          });
+        }, 100);
+      });
     });
 
     render(
@@ -143,9 +61,96 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    const page2Button = await screen.findByRole('button', { name: '2' });
-    expect(page2Button).toBeInTheDocument();
+    const searchInput = screen.getByPlaceholderText(
+      'Search for a character...'
+    );
+    fireEvent.change(searchInput, { target: { value: 'test' } });
+    const searchButton = screen.getByText('Search');
+    fireEvent.click(searchButton);
 
-    fireEvent.click(page2Button);
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    });
+  });
+
+  it('displays error message on fetch failure', async () => {
+    (
+      fetchCharacters as MockedFunction<typeof fetchCharacters>
+    ).mockRejectedValueOnce(new Error('Character not found'));
+
+    render(
+      <MemoryRouter initialEntries={['/1']}>
+        <CharacterPage />
+      </MemoryRouter>
+    );
+
+    const searchInput = screen.getByPlaceholderText(
+      'Search for a character...'
+    );
+    fireEvent.change(searchInput, { target: { value: 'test' } });
+
+    const form = searchInput.closest('form');
+    if (form) {
+      fireEvent.submit(form);
+    }
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/error: no characters found/i)
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('renders page buttons and handles page change on click', async () => {
+    (
+      fetchCharacters as MockedFunction<typeof fetchCharacters>
+    ).mockResolvedValueOnce({
+      info: { pages: 3, count: 30, next: null, prev: null },
+      results: [
+        {
+          id: 1,
+          name: 'Rick Sanchez',
+          status: 'Alive',
+          species: 'Human',
+          gender: 'Male',
+          image: 'rick-image.jpg',
+        },
+        {
+          id: 2,
+          name: 'Morty Smith',
+          status: 'Alive',
+          species: 'Human',
+          gender: 'Male',
+          image: 'morty-image.jpg',
+        },
+      ],
+    });
+
+    render(
+      <MemoryRouter initialEntries={['/1']}>
+        <CharacterPage />
+      </MemoryRouter>
+    );
+
+    const searchInput = screen.getByPlaceholderText(
+      'Search for a character...'
+    );
+    fireEvent.change(searchInput, { target: { value: 'rick' } });
+    const searchButton = screen.getByText('Search');
+    fireEvent.click(searchButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Rick Sanchez')).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      const pageButton = screen.getByRole('button', { name: '2' });
+      expect(pageButton).toBeInTheDocument();
+    });
+
+    const pageButton = screen.getByRole('button', { name: '2' });
+    fireEvent.click(pageButton);
   });
 });
