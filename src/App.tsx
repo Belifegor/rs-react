@@ -16,7 +16,7 @@ export default function App() {
       </div>
       <button
         onClick={() => setHasError(true)}
-        className="fixed bottom-5 right-5 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+        className="fixed bottom-5 right-5 px-4 py-2 bg-red-800 text-white rounded-md hover:bg-red-700 transition-colors"
       >
         Simulate Error
       </button>
