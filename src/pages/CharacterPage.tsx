@@ -32,34 +32,29 @@ export default function CharacterListPage() {
     if (query) fetchData(query, page || '1');
   }, [searchTerm, page]);
 
-  const fetchData = (term: string, page: string) => {
+  const fetchData = async (term: string, page: string) => {
     const query = term.trim().toLowerCase();
     setLoading(true);
     setError(null);
 
-    const pageNumber = parseInt(page);
-    if (isNaN(pageNumber) || pageNumber < 1) {
-      navigate('/not-found');
-      return;
-    }
+    try {
+      const data = await fetchCharacters(query, page);
 
-    fetchCharacters(query, page)
-      .then((data) => {
-        const pageNumber = parseInt(page);
-        if (pageNumber > data.info.pages || pageNumber < 1) {
-          console.log('Page not found, redirecting...');
-          navigate('/not-found');
-          return;
-        }
-
-        setResults(data.results);
-        setTotalPages(data.info.pages);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Fetch error:', error);
+      const pageNumber = parseInt(page);
+      if (pageNumber > data.info.pages || pageNumber < 1) {
+        console.log('Page not found, redirecting...');
         navigate('/not-found');
-      });
+        return;
+      }
+
+      setResults(data.results);
+      setTotalPages(data.info.pages);
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setError('No characters found for this search term.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const goToPage = (newPage: number) => {
