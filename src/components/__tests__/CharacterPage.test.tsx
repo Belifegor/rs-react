@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MockedFunction } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../../App';
+import CharacterPage from '../../pages/CharacterPage';
 import { fetchCharacters, fetchPageData } from '../../api/rickAndMorty';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -47,7 +47,7 @@ describe('App Component', () => {
 
     render(
       <MemoryRouter>
-        <App />
+        <CharacterPage />
       </MemoryRouter>
     );
 
@@ -63,7 +63,7 @@ describe('App Component', () => {
 
     render(
       <MemoryRouter>
-        <App />
+        <CharacterPage />
       </MemoryRouter>
     );
 
@@ -89,7 +89,7 @@ describe('App Component', () => {
 
     render(
       <MemoryRouter>
-        <App />
+        <CharacterPage />
       </MemoryRouter>
     );
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
@@ -106,7 +106,7 @@ describe('App Component', () => {
 
     render(
       <MemoryRouter>
-        <App />
+        <CharacterPage />
       </MemoryRouter>
     );
 
@@ -138,8 +138,8 @@ describe('App Component', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/?page=1']}>
-        <App />
+      <MemoryRouter initialEntries={['/1']}>
+        <CharacterPage />
       </MemoryRouter>
     );
 

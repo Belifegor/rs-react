@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate } from 'react-router-dom';
 import Search from '../components/Search';
 import type { Character } from '../types/types';
 import Card from '../components/Card';
@@ -7,6 +7,7 @@ import { fetchCharacters } from '../api/rickAndMorty';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useCallback } from 'react';
 
 export default function CharacterListPage() {
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
@@ -27,35 +28,38 @@ export default function CharacterListPage() {
     }
   }, [page, navigate]);
 
+  const fetchData = useCallback(
+    async (term: string, page: string) => {
+      const query = term.trim().toLowerCase();
+      setLoading(true);
+      setError(null);
+
+      try {
+        const data = await fetchCharacters(query, page);
+
+        const pageNumber = parseInt(page);
+        if (pageNumber > data.info.pages || pageNumber < 1) {
+          console.log('Page not found, redirecting...');
+          navigate('/not-found');
+          return;
+        }
+
+        setResults(data.results);
+        setTotalPages(data.info.pages);
+      } catch (error) {
+        console.error('Fetch error:', error);
+        setError('No characters found for this search term.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [navigate]
+  );
+
   useEffect(() => {
     const query = searchTerm.trim().toLowerCase();
     if (query) fetchData(query, page || '1');
-  }, [searchTerm, page]);
-
-  const fetchData = async (term: string, page: string) => {
-    const query = term.trim().toLowerCase();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await fetchCharacters(query, page);
-
-      const pageNumber = parseInt(page);
-      if (pageNumber > data.info.pages || pageNumber < 1) {
-        console.log('Page not found, redirecting...');
-        navigate('/not-found');
-        return;
-      }
-
-      setResults(data.results);
-      setTotalPages(data.info.pages);
-    } catch (error) {
-      console.error('Fetch error:', error);
-      setError('No characters found for this search term.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [searchTerm, page, fetchData]);
 
   const goToPage = (newPage: number) => {
     const newPath = detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`;

@@ -1,6 +1,6 @@
 import '../src/assets/styles/App.css';
 import { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 
 export default function App() {
   const [hasError, setHasError] = useState(false);
