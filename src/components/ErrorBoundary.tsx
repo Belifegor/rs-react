@@ -24,11 +24,13 @@ class ErrorBoundary extends Component<PropsError, StateError> {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <div className="p-4 bg-red-100 text-red-700 text-center">
-            <p>Something went wrong.</p>
+          <div className="p-8 bg-gray-500 rounded-xl text-white text-center">
+            <p>
+              <strong>Something went wrong.</strong>
+            </p>
             <button
               onClick={this.handleReset}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
               Try Again
             </button>

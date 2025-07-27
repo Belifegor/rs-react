@@ -23,10 +23,12 @@ if (rootElement) {
                 path=":page/:detailsId"
                 element={
                   <div className="flex w-full min-h-screen">
-                    <div className="w-2/3">
-                      <CharacterPage />
+                    {' '}
+                    <div className="flex-grow">
+                      {' '}
+                      <CharacterPage />{' '}
                     </div>
-                    <div className="w-1/3 border-l bg-gray-700">
+                    <div className="w-1/3 p-4 overflow-y-auto m-auto">
                       <Details />
                     </div>
                   </div>
