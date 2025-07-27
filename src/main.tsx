@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '../src/assets/styles/index.css';
-import Details from './components/Details.tsx';
+import MasterDetailWrapper from './components/MasterDetailWrapper.tsx';
 import Layout from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary.tsx';
 import About from './pages/AboutPage.tsx';
@@ -21,18 +21,7 @@ if (rootElement) {
               <Route path=":page" element={<CharacterPage />} />
               <Route
                 path=":page/:detailsId"
-                element={
-                  <div className="flex w-full min-h-screen">
-                    {' '}
-                    <div className="flex-grow">
-                      {' '}
-                      <CharacterPage />{' '}
-                    </div>
-                    <div className="w-1/3 p-4 overflow-y-auto m-auto">
-                      <Details />
-                    </div>
-                  </div>
-                }
+                element={<MasterDetailWrapper />}
               />
               <Route path="about" element={<About />} />
               <Route path="not-found" element={<NotFound />} />
