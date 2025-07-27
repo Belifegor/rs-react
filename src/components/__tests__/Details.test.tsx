@@ -22,7 +22,7 @@ afterEach(() => {
 
 describe('Details', () => {
   it('показывает лоадер', () => {
-    (router.useParams as unknown as vi.Mock).mockReturnValue({
+    (router.useParams as vi.Mock).mockReturnValue({
       detailsId: '1',
       page: '3',
     });
@@ -37,8 +37,8 @@ describe('Details', () => {
 
   it('показывает ошибку и вызывает navigate при ошибке', async () => {
     const mockNavigate = vi.fn();
-    (router.useNavigate as unknown as vi.Mock).mockReturnValue(mockNavigate);
-    (router.useParams as unknown as vi.Mock).mockReturnValue({
+    (router.useNavigate as vi.Mock).mockReturnValue(mockNavigate);
+    (router.useParams as vi.Mock).mockReturnValue({
       detailsId: '1',
       page: '3',
     });
@@ -46,7 +46,7 @@ describe('Details', () => {
       Promise.resolve({
         ok: false,
         json: () => Promise.resolve({}),
-      } as unknown as Response)
+      } as Response)
     ) as typeof fetch;
 
     render(
@@ -64,8 +64,8 @@ describe('Details', () => {
 
   it('отображает персонажа и кнопка закрытия работает', async () => {
     const mockNavigate = vi.fn();
-    (router.useNavigate as unknown as vi.Mock).mockReturnValue(mockNavigate);
-    (router.useParams as unknown as vi.Mock).mockReturnValue({
+    (router.useNavigate as vi.Mock).mockReturnValue(mockNavigate);
+    (router.useParams as vi.Mock).mockReturnValue({
       detailsId: '1',
       page: '3',
     });
@@ -96,7 +96,7 @@ describe('Details', () => {
   });
 
   it('возвращает null если нет detailsId', () => {
-    (router.useParams as unknown as vi.Mock).mockReturnValue({ page: '1' });
+    (router.useParams as vi.Mock).mockReturnValue({ page: '1' });
 
     const { container } = render(
       <MemoryRouter>
