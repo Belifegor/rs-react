@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import Details from '../Details';
 import * as router from 'react-router-dom';
+import type { Mock } from 'vitest';
 
 vi.mock('react-router-dom', async () => {
   const actual =
@@ -22,7 +23,7 @@ afterEach(() => {
 
 describe('Details', () => {
   it('показывает лоадер', () => {
-    (router.useParams as vi.Mock).mockReturnValue({
+    (router.useParams as Mock).mockReturnValue({
       detailsId: '1',
       page: '3',
     });
@@ -37,8 +38,8 @@ describe('Details', () => {
 
   it('показывает ошибку и вызывает navigate при ошибке', async () => {
     const mockNavigate = vi.fn();
-    (router.useNavigate as vi.Mock).mockReturnValue(mockNavigate);
-    (router.useParams as vi.Mock).mockReturnValue({
+    (router.useNavigate as Mock).mockReturnValue(mockNavigate);
+    (router.useParams as Mock).mockReturnValue({
       detailsId: '1',
       page: '3',
     });
@@ -64,8 +65,8 @@ describe('Details', () => {
 
   it('отображает персонажа и кнопка закрытия работает', async () => {
     const mockNavigate = vi.fn();
-    (router.useNavigate as vi.Mock).mockReturnValue(mockNavigate);
-    (router.useParams as vi.Mock).mockReturnValue({
+    (router.useNavigate as Mock).mockReturnValue(mockNavigate);
+    (router.useParams as Mock).mockReturnValue({
       detailsId: '1',
       page: '3',
     });
@@ -96,7 +97,7 @@ describe('Details', () => {
   });
 
   it('возвращает null если нет detailsId', () => {
-    (router.useParams as vi.Mock).mockReturnValue({ page: '1' });
+    (router.useParams as Mock).mockReturnValue({ page: '1' });
 
     const { container } = render(
       <MemoryRouter>
