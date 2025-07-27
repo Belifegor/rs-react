@@ -1,5 +1,5 @@
 import type { Character } from '../types/types';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function Card({ character }: { character: Character }) {
   const navigate = useNavigate();

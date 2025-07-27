@@ -2,9 +2,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MockedFunction } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from '../../Layout';
+import App from '../../App';
 import { fetchCharacters, fetchPageData } from '../../api/rickAndMorty';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('../../api/rickAndMorty');
 

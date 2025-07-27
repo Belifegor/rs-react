@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Character } from '../types/types';
 
 export default function Details() {
@@ -22,9 +22,12 @@ export default function Details() {
         return res.json();
       })
       .then((data) => setCharacter(data))
-      .catch((err) => setError(err.message))
+      .catch((err) => {
+        setError(err.message);
+        navigate('/not-found');
+      })
       .finally(() => setLoading(false));
-  }, [detailsId]);
+  }, [detailsId, navigate]);
 
   if (loading) return <div className="p-4">In progress...</div>;
 
