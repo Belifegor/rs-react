@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { Store } from './../../types/types';
 
-export const useSelectionStore = create<Store>((set, get) => ({
+export const useSelectionStore = create<Store>()((set, get) => ({
   selected: [],
   toggle: (id) =>
     set((state) =>
