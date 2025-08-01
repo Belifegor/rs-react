@@ -1,14 +1,12 @@
 import type { Character } from '../types/types';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelectionStore } from './store/selectedCharacters';
+import { useStore } from './store/store';
 
 export default function Card({ character }: { character: Character }) {
   const navigate = useNavigate();
   const { page = '1' } = useParams();
-  const isSelected = useSelectionStore((state) =>
-    state.isSelected(character.id)
-  );
-  const toggle = useSelectionStore((state) => state.toggle);
+  const isSelected = useStore((s) => s.isSelected(character.id));
+  const toggle = useStore((s) => s.toggle);
 
   return (
     <div

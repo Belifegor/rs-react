@@ -1,7 +1,16 @@
-import { create } from 'zustand';
-import type { Store } from './../../types/types';
+import type { StateCreator } from 'zustand';
 
-export const useSelectionStore = create<Store>()((set, get) => ({
+export interface SelectionSlice {
+  selected: number[];
+  toggle: (id: number) => void;
+  isSelected: (id: number) => boolean;
+  unselectAll: () => void;
+}
+
+export const createSelectionSlice: StateCreator<SelectionSlice> = (
+  set,
+  get
+) => ({
   selected: [],
   toggle: (id) =>
     set((state) =>
@@ -11,4 +20,4 @@ export const useSelectionStore = create<Store>()((set, get) => ({
     ),
   isSelected: (id) => get().selected.includes(id),
   unselectAll: () => set({ selected: [] }),
-}));
+});
