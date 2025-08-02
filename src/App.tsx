@@ -1,16 +1,9 @@
 import '../src/assets/styles/App.css';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import Flyout from './components/Flyout ';
-import { useStore } from './store/store';
 
 export default function App() {
   // const [hasError, setHasError] = useState(false);
   const location = useLocation();
-  const selected = useStore((s) => s.selected);
-
-  if (hasError) {
-    throw new Error('Simulated error');
-  }
 
   return (
     <div className="flex gap-4 min-h-screen">
@@ -31,7 +24,6 @@ export default function App() {
       >
         Simulate Error
       </button> */}
-      {selected.length > 0 && <Flyout />}
     </div>
   );
 }

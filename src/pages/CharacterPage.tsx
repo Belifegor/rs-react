@@ -8,11 +8,14 @@ import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useCallback } from 'react';
+import { useStore } from '../store/store';
+import Flyout from '../components/Flyout';
 
 export default function CharacterListPage() {
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<Character[]>([]);
+  const selected = useStore((s) => s.selected);
   const [error, setError] = useState<string | null>(null);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
@@ -91,6 +94,7 @@ export default function CharacterListPage() {
         {results.map((char) => (
           <Card key={char.id} character={char} />
         ))}
+        {selected.length > 0 && <Flyout items={results} />}
       </div>
 
       {!loading && !error && results.length > 0 && (
