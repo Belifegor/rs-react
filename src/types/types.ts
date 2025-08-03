@@ -46,3 +46,10 @@ export type AppState = {
   prevPage: string | null;
   hasError: boolean;
 };
+
+export type Store = {
+  selected: number[];
+  toggle: (id: number) => void;
+  unselectAll: () => void;
+  isSelected: (id: number) => boolean;
+};

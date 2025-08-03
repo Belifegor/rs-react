@@ -1,14 +1,17 @@
 import type { Character } from '../types/types';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useStore } from '../store/store';
 
 export default function Card({ character }: { character: Character }) {
   const navigate = useNavigate();
   const { page = '1' } = useParams();
+  const isSelected = useStore((s) => s.isSelected(character.id));
+  const toggle = useStore((s) => s.toggle);
 
   return (
     <div
       onClick={() => navigate(`/${page}/${character.id}`)}
-      className="bg-gray-700 shadow-md rounded-lg p-4 flex flex-col items-center"
+      className="relative bg-gray-700 shadow-md rounded-lg p-6 flex flex-col items-center"
       data-testid="card"
     >
       <img
@@ -22,6 +25,13 @@ export default function Card({ character }: { character: Character }) {
       <p className="text-sm text-black-400 text-center">
         {character.species}, {character.gender}
       </p>
+      <input
+        type="checkbox"
+        checked={isSelected}
+        onChange={() => toggle(character.id)}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute bottom-3 right-3 scale-150 accent-blue-600 cursor-pointer"
+      />
     </div>
   );
 }

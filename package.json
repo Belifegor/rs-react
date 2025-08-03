@@ -20,7 +20,8 @@
     "react-dom": "^19.1.0",
     "react-router": "^7.7.1",
     "react-router-dom": "^7.7.1",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "zustand": "^5.0.7"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,jsx}": [
