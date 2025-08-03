@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/22</span>
+                <span class='fraction'>32/32</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>1/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>22/22</span>
+                <span class='fraction'>32/32</span>
             </div>
         
             
@@ -90,19 +90,39 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">8x</span>
@@ -119,15 +139,18 @@
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import type { Character } from '../types/types';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useStore } from '../store/store';
 &nbsp;
 export default function Card({ character }: { character: Character }) {
   const navigate = useNavigate();
   const { page = '1' } = useParams();
+  const isSelected = useStore((s) =&gt; s.isSelected(character.id));
+  const toggle = useStore((s) =&gt; s.toggle);
 &nbsp;
   return (
     &lt;div
       onClick={<span class="fstat-no" title="function not covered" >() =&gt; navigate(`/${page}/${character.id}`)}</span>
-      className="bg-gray-700 shadow-md rounded-lg p-4 flex flex-col items-center"
+      className="relative bg-gray-700 shadow-md rounded-lg p-6 flex flex-col items-center"
       data-testid="card"
     &gt;
       &lt;img
@@ -141,6 +164,13 @@ export default function Card({ character }: { character: Character }) {
       &lt;p className="text-sm text-black-400 text-center"&gt;
         {character.species}, {character.gender}
       &lt;/p&gt;
+      &lt;input
+        type="checkbox"
+        checked={isSelected}
+        onChange={<span class="fstat-no" title="function not covered" >() =&gt; toggle(character.id)}</span>
+        onClick={<span class="fstat-no" title="function not covered" >(e) =&gt; e.stopPropagation()}</span>
+        className="absolute bottom-3 right-3 scale-150 accent-blue-600 cursor-pointer"
+      /&gt;
     &lt;/div&gt;
   );
 }
@@ -151,7 +181,7 @@ export default function Card({ character }: { character: Character }) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-30T13:50:22.331Z
+                at 2025-08-03T22:58:44.202Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

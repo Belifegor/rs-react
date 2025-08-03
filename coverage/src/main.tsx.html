@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/32</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/32</span>
             </div>
         
             
@@ -98,10 +98,18 @@
 <a name='L33'></a><a href='#L33'>33</a>
 <a name='L34'></a><a href='#L34'>34</a>
 <a name='L35'></a><a href='#L35'>35</a>
-<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -121,13 +129,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -139,32 +141,33 @@
 <span class="cstat-no" title="statement not covered" >import '../src/assets/styles/index.css';</span>
 <span class="cstat-no" title="statement not covered" >import MasterDetailWrapper from './components/MasterDetailWrapper.tsx';</span>
 <span class="cstat-no" title="statement not covered" >import Layout from './App.tsx';</span>
-<span class="cstat-no" title="statement not covered" >import ErrorBoundary from './components/ErrorBoundary.tsx';</span>
+// import ErrorBoundary from './components/ErrorBoundary.tsx';
 <span class="cstat-no" title="statement not covered" >import About from './pages/AboutPage.tsx';</span>
 <span class="cstat-no" title="statement not covered" >import NotFound from './pages/NotFound.tsx';</span>
-<span class="cstat-no" title="statement not covered" >import CharacterPage from './pages/CharacterPage.tsx';</span>
+<span class="cstat-no" title="statement not covered" >import { ThemeProvider } from './utils/ThemeProvider';</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >const rootElement = document.getElementById('root');</span>
 <span class="cstat-no" title="statement not covered" >if (rootElement) {</span>
 <span class="cstat-no" title="statement not covered" >  createRoot(rootElement).render(</span>
 <span class="cstat-no" title="statement not covered" >    &lt;StrictMode&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;BrowserRouter&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;ErrorBoundary&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;ThemeProvider&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;BrowserRouter&gt;</span>
+          {/* &lt;ErrorBoundary&gt; */}
 <span class="cstat-no" title="statement not covered" >          &lt;Routes&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;Route path="/" element={&lt;Layout /&gt;}&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;Route index element={&lt;CharacterPage /&gt;} /&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;Route path=":page" element={&lt;CharacterPage /&gt;} /&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;Route</span>
-<span class="cstat-no" title="statement not covered" >                path=":page/:detailsId"</span>
-<span class="cstat-no" title="statement not covered" >                element={&lt;MasterDetailWrapper /&gt;}</span>
-<span class="cstat-no" title="statement not covered" >              /&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;Route path="/" element={&lt;MasterDetailWrapper /&gt;}&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;Route index element={&lt;&gt;&lt;/&gt;} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;Route path=":page" element={&lt;&gt;&lt;/&gt;} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;Route path=":page/:detailsId" element={&lt;&gt;&lt;/&gt;} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/Route&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;Route path="about" element={&lt;About /&gt;} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;Route path="not-found" element={&lt;NotFound /&gt;} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/Route&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/Routes&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;/ErrorBoundary&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/BrowserRouter&gt;</span>
+          {/* &lt;/ErrorBoundary&gt; */}
+<span class="cstat-no" title="statement not covered" >        &lt;/BrowserRouter&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/ThemeProvider&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/StrictMode&gt;</span>
 <span class="cstat-no" title="statement not covered" >  );</span>
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -175,7 +178,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-07-30T13:50:22.331Z
+                at 2025-08-03T22:58:44.202Z
             </div>
         <script src="../prettify.js"></script>
         <script>

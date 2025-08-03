@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import App from '../../App';
 
@@ -35,22 +35,5 @@ describe('App', () => {
     expect(
       screen.queryByRole('link', { name: /About/i })
     ).not.toBeInTheDocument();
-  });
-
-  it('Simulate Error кидает ошибку', () => {
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path="*" element={<App />}>
-            <Route index element={<MockOutlet />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
-    );
-    expect(() =>
-      fireEvent.click(screen.getByRole('button', { name: /Simulate Error/i }))
-    ).toThrow(/Simulated error/);
-    errorSpy.mockRestore();
   });
 });

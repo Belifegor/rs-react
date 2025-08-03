@@ -51,6 +51,7 @@ export default function Flyout({ items }: { items: Character[] }) {
         Unselect all
       </button>
       <button
+        data-testid="download-btn"
         className="px-3 py-1 rounded bg-green-600 hover:bg-green-700 transition"
         onClick={handleDownload}
       >
