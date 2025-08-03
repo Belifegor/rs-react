@@ -87,7 +87,7 @@ export default function CharacterListPage() {
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 w-full max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 w-full max-w-5xl mx-auto cursor-pointer">
         {results.slice(0, 8).map((char) => (
           <Card key={char.id} character={char} />
         ))}

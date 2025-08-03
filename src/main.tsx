@@ -4,16 +4,18 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '../src/assets/styles/index.css';
 import MasterDetailWrapper from './components/MasterDetailWrapper.tsx';
 import Layout from './App.tsx';
-import ErrorBoundary from './components/ErrorBoundary.tsx';
+// import ErrorBoundary from './components/ErrorBoundary.tsx';
 import About from './pages/AboutPage.tsx';
 import NotFound from './pages/NotFound.tsx';
+import { ThemeProvider } from './utils/ThemeProvider';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <BrowserRouter>
-        <ErrorBoundary>
+      <ThemeProvider>
+        <BrowserRouter>
+          {/* <ErrorBoundary> */}
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<MasterDetailWrapper />}>
@@ -26,8 +28,9 @@ if (rootElement) {
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
-        </ErrorBoundary>
-      </BrowserRouter>
+          {/* </ErrorBoundary> */}
+        </BrowserRouter>
+      </ThemeProvider>
     </StrictMode>
   );
 }

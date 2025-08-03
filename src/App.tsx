@@ -1,11 +1,12 @@
 import '../src/assets/styles/App.css';
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { ThemeChanger } from './utils/ThemeChanger';
 
 export default function App() {
   const location = useLocation();
 
   return (
-    <div className="flex gap-4 min-h-screen m-auto">
+    <div className="flex gap-4 min-h-screen m-auto dark:text-white dark:bg-gray-900">
       <Outlet />
       {location.pathname !== '/about' && (
         <Link
@@ -15,6 +16,7 @@ export default function App() {
           About
         </Link>
       )}
+      <ThemeChanger />
     </div>
   );
 }

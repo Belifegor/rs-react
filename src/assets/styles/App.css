@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 #root {
-  padding: 2rem;
-  text-align: center;
+   @apply  w-full min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white;
 }
 
 .logo {
