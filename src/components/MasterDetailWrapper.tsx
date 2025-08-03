@@ -1,26 +1,25 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CharacterPage from '../pages/CharacterPage';
 import Details from './Details';
 
 export default function MasterDetailWrapper() {
-  const navigate = useNavigate();
-  const { page = '1' } = useParams();
+  // const navigate = useNavigate();
+  const { detailsId } = useParams();
 
   return (
-    <div className="flex w-full min-h-screen">
-      <div
-        className="flex-grow"
-        onClick={() => navigate(`/${page}`)}
-        style={{ cursor: 'pointer' }}
-        tabIndex={0}
-        role="button"
-        aria-label="Close details"
-      >
-        <CharacterPage />
+    <div className="flex min-h-screen w-full">
+      {/* Контейнер с сеткой */}
+      <div className="flex-1 flex justify-center">
+        <div className="max-w-5xl w-full px-4">
+          <CharacterPage />
+        </div>
       </div>
-      <div className="w-1/3 p-4 overflow-y-auto m-auto">
-        <Details />
-      </div>
+      {/* Панель деталей */}
+      {detailsId && (
+        <div className="w-96 p-4  mt-64">
+          <Details />
+        </div>
+      )}
     </div>
   );
 }

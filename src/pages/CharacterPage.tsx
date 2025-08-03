@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Outlet } from 'react-router-dom';
 import Search from '../components/Search';
 import type { Character } from '../types/types';
 import Card from '../components/Card';
@@ -76,9 +76,6 @@ export default function CharacterListPage() {
     navigate(`/1`);
   };
 
-  const gridClass =
-    'grid grid-cols-1 sm:grid-cols-4 gap-6 w-full max-w-5xl mx-auto';
-
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <Search onSearch={handleSearch} initialValue={searchTerm} />
@@ -90,8 +87,8 @@ export default function CharacterListPage() {
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: 'red' }}>Error: {error}</p>}
 
-      <div className={gridClass}>
-        {results.map((char) => (
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 w-full max-w-5xl mx-auto">
+        {results.slice(0, 8).map((char) => (
           <Card key={char.id} character={char} />
         ))}
         {selected.length > 0 && <Flyout items={results} />}
@@ -104,6 +101,9 @@ export default function CharacterListPage() {
           onPageChange={goToPage}
         />
       )}
+      <div className="w-1/3 p-4 overflow-y-auto m-auto">
+        <Outlet />
+      </div>
     </div>
   );
 }

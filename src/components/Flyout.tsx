@@ -40,7 +40,7 @@ export default function Flyout({ items }: { items: Character[] }) {
   if (selected.length === 0) return null;
 
   return (
-    <div className="fixed bottom-5 right-2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4 z-50">
+    <div className="fixed bottom-8 right-2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4 z-50">
       <span>
         {selected.length} item{selected.length > 1 ? 's' : ''} selected
       </span>
