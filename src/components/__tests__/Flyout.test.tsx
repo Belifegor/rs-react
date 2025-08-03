@@ -20,7 +20,14 @@ beforeEach(() => {
 });
 
 const items: Character[] = [
-  { id: '1', name: 'Rick', status: 'Alive', gender: 'Male' },
+  {
+    id: 1,
+    name: 'Rick',
+    status: 'Alive',
+    gender: 'Male',
+    species: '',
+    image: '',
+  },
 ];
 
 describe('Flyout statements smoke', () => {
