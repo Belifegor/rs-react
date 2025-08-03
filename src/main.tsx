@@ -16,13 +16,11 @@ if (rootElement) {
         <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Layout />}>
-              {/* Всегда MasterDetailWrapper! */}
               <Route path="/" element={<MasterDetailWrapper />}>
                 <Route index element={<></>} />
                 <Route path=":page" element={<></>} />
                 <Route path=":page/:detailsId" element={<></>} />
               </Route>
-              {/* Остальные роуты */}
               <Route path="about" element={<About />} />
               <Route path="not-found" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
