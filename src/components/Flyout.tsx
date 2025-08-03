@@ -1,10 +1,7 @@
 import { useStore } from '../store/store';
+import type { Character } from '../types/types';
 
-export default function Flyout({
-  items,
-}: {
-  items: { id: number; name: string; status: string }[];
-}) {
+export default function Flyout({ items }: { items: Character[] }) {
   const selected = useStore((s) => s.selected);
   const unselectAll = useStore((s) => s.unselectAll);
 
@@ -16,7 +13,13 @@ export default function Flyout({
 
     const csvRows = [
       ['id', 'name', 'status', 'gender'],
-      ...selectedItems.map((item) => [item.id, item.name, item.status]),
+      ...selectedItems.map((item) => [
+        item.id,
+        item.name,
+        item.status,
+        item.gender,
+        `${window.location.origin}/${item.id}`,
+      ]),
     ]
       .map((row) => row.map(String).join(','))
       .join('\n');
