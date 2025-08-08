@@ -3,7 +3,7 @@ import { useParams, useNavigate, Outlet } from 'react-router-dom';
 import Search from '../components/Search';
 import type { Character } from '../types/types';
 import Card from '../components/Card';
-import { fetchCharacters } from '../api/rickAndMorty';
+import { fetchCharacters } from '../api/api';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { useLocalStorage } from '../hooks/useLocalStorage';

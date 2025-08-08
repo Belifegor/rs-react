@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fetchCharacters, fetchPageData } from '../../api/rickAndMorty';
+import { fetchCharacters, fetchPageData } from '../../api/api';
 
 describe('rickAndMorty API', () => {
   beforeEach(() => {
