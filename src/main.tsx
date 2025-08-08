@@ -9,6 +9,7 @@ import Layout from './App.tsx';
 import About from './pages/AboutPage.tsx';
 import NotFound from './pages/NotFound.tsx';
 import { ThemeProvider } from './utils/ThemeProvider';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ if (rootElement) {
               </Route>
             </Routes>
           </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </ThemeProvider>
     </StrictMode>
