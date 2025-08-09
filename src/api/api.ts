@@ -5,14 +5,13 @@ export const fetchCharacters = async (
   page = '1'
 ): Promise<RMResponse> => {
   const query = term.trim().toLowerCase();
-  let url = 'https://rickandmortyapi.com/api/character';
-  if (query) {
-    url += `/?name=${query}&page=${page}`;
-  }
+  const params = new URLSearchParams();
+  params.set('page', page);
+  if (query) params.set('name', query);
+
+  const url = `https://rickandmortyapi.com/api/character/?${params.toString()}`;
   const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error('Character not found');
-  }
+  if (!response.ok) throw new Error('Character not found');
 
   return response.json();
 };

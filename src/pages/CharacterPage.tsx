@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Outlet } from 'react-router-dom';
 import Search from '../components/Search';
 import Card from '../components/Card';
@@ -8,12 +8,18 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useStore } from '../store/store';
 import Flyout from '../components/Flyout';
 import { useChatactersQuery } from '../hooks/useCharactersQuery';
+import RefreshButton from '../components/RefreshButton';
 
 export default function CharacterListPage() {
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
   const { page = '1', detailsId } = useParams();
   const navigate = useNavigate();
   const selected = useStore((s) => s.selected);
+
+  const normalizedTerm = useMemo(
+    () => searchTerm.trim().toLowerCase(),
+    [searchTerm]
+  );
 
   useEffect(() => {
     const pageNumber = Number(page);
@@ -23,7 +29,7 @@ export default function CharacterListPage() {
   }, [page, navigate]);
 
   const { data, isLoading, isError, error } = useChatactersQuery(
-    searchTerm.trim().toLowerCase(),
+    normalizedTerm,
     page || '1'
   );
 
@@ -56,6 +62,7 @@ export default function CharacterListPage() {
   return (
     <div className="w-full flex flex-col items-center justify-center">
       <Search onSearch={handleSearch} initialValue={searchTerm} />
+      <RefreshButton term={searchTerm} page={page} />
       <h1 className="mb-4">Rick and Morty Characters</h1>
       <p className="mb-4 text-2xl text-stone-300">
         Search Term: <strong>{searchTerm}</strong>
