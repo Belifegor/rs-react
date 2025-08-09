@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import CharacterPage from '../pages/CharacterPage';
+import CharacterPage from '../pages/CharacterListPage';
 import Details from './Details';
 
 export default function MasterDetailWrapper() {

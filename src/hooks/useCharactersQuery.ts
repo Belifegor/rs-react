@@ -2,7 +2,7 @@ import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { fetchCharacters } from '../api/api';
 import type { RMResponse } from '../types/types';
 
-export const useChatactersQuery = (term: string, page: string) => {
+export const useCharactersQuery = (term: string, page: string) => {
   const normalizedTerm = term.trim().toLowerCase();
 
   return useQuery<RMResponse>({

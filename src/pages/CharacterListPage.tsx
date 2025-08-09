@@ -7,8 +7,9 @@ import { Pagination } from '../components/Pagination';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useStore } from '../store/store';
 import Flyout from '../components/Flyout';
-import { useChatactersQuery } from '../hooks/useCharactersQuery';
+import { useCharactersQuery } from '../hooks/useCharactersQuery';
 import RefreshButton from '../components/RefreshButton';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 export default function CharacterListPage() {
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
@@ -28,7 +29,7 @@ export default function CharacterListPage() {
     }
   }, [page, navigate]);
 
-  const { data, isLoading, isError, error } = useChatactersQuery(
+  const { data, isLoading, isError, error, isFetching } = useCharactersQuery(
     normalizedTerm,
     page || '1'
   );
@@ -60,15 +61,20 @@ export default function CharacterListPage() {
   const results = data?.results ?? [];
 
   return (
-    <div className="w-full flex flex-col items-center justify-center">
+    <div className="relative min-h-[60vh] w-full flex flex-col items-center justify-center">
+      <LoadingOverlay
+        show={isLoading || isFetching}
+        label={isLoading ? 'Loading…' : 'Updating…'}
+      />
+
       <Search onSearch={handleSearch} initialValue={searchTerm} />
       <RefreshButton term={searchTerm} page={page} />
+
       <h1 className="mb-4">Rick and Morty Characters</h1>
       <p className="mb-4 text-2xl text-stone-300">
         Search Term: <strong>{searchTerm}</strong>
       </p>
 
-      {isLoading && <p>Loading...</p>}
       {isError && (
         <p style={{ color: 'red' }}>
           Error: {(error as Error)?.message ?? 'Something went wrong'}
@@ -81,6 +87,12 @@ export default function CharacterListPage() {
         ))}
         {selected.length > 0 && <Flyout items={results} />}
       </div>
+
+      {!isLoading && !isError && results.length === 0 && (
+        <p className="text-stone-300">
+          No characters found. Try another query.
+        </p>
+      )}
 
       {!isLoading && !isError && results.length > 0 && (
         <Pagination
