@@ -1,68 +1,51 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Outlet } from 'react-router-dom';
 import Search from '../components/Search';
-import type { Character } from '../types/types';
 import Card from '../components/Card';
-import { fetchCharacters } from '../api/rickAndMorty';
 import { usePagination } from '../hooks/usePagination';
 import { Pagination } from '../components/Pagination';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useCallback } from 'react';
 import { useStore } from '../store/store';
 import Flyout from '../components/Flyout';
+import { useCharactersQuery } from '../hooks/useCharactersQuery';
+import RefreshButton from '../components/RefreshButton';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 export default function CharacterListPage() {
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<Character[]>([]);
-  const selected = useStore((s) => s.selected);
-  const [error, setError] = useState<string | null>(null);
-  const [totalPages, setTotalPages] = useState(1);
-  const navigate = useNavigate();
   const { page = '1', detailsId } = useParams();
+  const current = Number(page) || 1;
+  const navigate = useNavigate();
+  const selected = useStore((s) => s.selected);
 
-  const { paginationRange } = usePagination(totalPages);
-
-  useEffect(() => {
-    const pageNumber = parseInt(page);
-    if (isNaN(pageNumber) || pageNumber < 1) {
-      navigate('/not-found');
-      return;
-    }
-  }, [page, navigate]);
-
-  const fetchData = useCallback(
-    async (term: string, page: string) => {
-      const query = term.trim().toLowerCase();
-      setLoading(true);
-      setError(null);
-
-      try {
-        const data = await fetchCharacters(query, page);
-
-        const pageNumber = parseInt(page);
-        if (pageNumber > data.info.pages || pageNumber < 1) {
-          console.log('Page not found, redirecting...');
-          navigate('/not-found');
-          return;
-        }
-
-        setResults(data.results);
-        setTotalPages(data.info.pages);
-      } catch (error) {
-        console.error('Fetch error:', error);
-        setError('No characters found for this search term.');
-      } finally {
-        setLoading(false);
-      }
-    },
-    [navigate]
+  const normalizedTerm = useMemo(
+    () => searchTerm.trim().toLowerCase(),
+    [searchTerm]
   );
 
   useEffect(() => {
-    const query = searchTerm.trim().toLowerCase();
-    if (query) fetchData(query, page || '1');
-  }, [searchTerm, page, fetchData]);
+    const pageNumber = Number(page);
+    if (!Number.isFinite(pageNumber) || pageNumber < 1) {
+      navigate('/not-found');
+    }
+  }, [page, navigate]);
+
+  const { data, isLoading, isError, error, isFetching } = useCharactersQuery(
+    normalizedTerm,
+    String(current)
+  );
+
+  const totalPages = data?.info.pages || 0;
+  const { paginationRange } = usePagination(totalPages, current);
+
+  useEffect(() => {
+    if (data) {
+      const pageNumber = Number(page);
+      if (pageNumber > data.info.pages) {
+        navigate('/1', { replace: true });
+      }
+    }
+  }, [data, page, navigate]);
 
   const goToPage = (newPage: number) => {
     const newPath = detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`;
@@ -76,16 +59,28 @@ export default function CharacterListPage() {
     navigate(`/1`);
   };
 
+  const results = data?.results ?? [];
+
   return (
-    <div className="w-full flex flex-col items-center justify-center">
+    <div className="relative min-h-[60vh] w-full flex flex-col items-center justify-center">
+      <LoadingOverlay
+        show={isLoading || isFetching}
+        label={isLoading ? 'Loading…' : 'Updating…'}
+      />
+
       <Search onSearch={handleSearch} initialValue={searchTerm} />
+      <RefreshButton term={searchTerm} page={page} />
+
       <h1 className="mb-4">Rick and Morty Characters</h1>
       <p className="mb-4 text-2xl text-stone-300">
         Search Term: <strong>{searchTerm}</strong>
       </p>
 
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {isError && (
+        <p style={{ color: 'red' }}>
+          Error: {(error as Error)?.message ?? 'Something went wrong'}
+        </p>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 w-full max-w-5xl mx-auto cursor-pointer">
         {results.slice(0, 8).map((char) => (
@@ -94,7 +89,19 @@ export default function CharacterListPage() {
         {selected.length > 0 && <Flyout items={results} />}
       </div>
 
-      {!loading && !error && results.length > 0 && (
+      {!isLoading && !isError && results.length === 0 && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          data-testid="error"
+          style={{ color: 'red' }}
+        >
+          Error:{' '}
+          {(error as unknown as Error)?.message ?? 'Something went wrong'}
+        </div>
+      )}
+
+      {!isLoading && !isError && results.length > 0 && (
         <Pagination
           currentPage={parseInt(page)}
           paginationRange={paginationRange}
