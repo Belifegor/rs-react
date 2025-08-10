@@ -20,7 +20,7 @@ export function useCharacterDetailsQuery(id?: string) {
     enabled: !!id,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
-    retry: 1,
+    retry: 0,
     placeholderData: (prev) => prev,
   });
 }

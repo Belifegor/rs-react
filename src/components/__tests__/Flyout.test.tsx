@@ -1,4 +1,3 @@
-// src/components/__tests__/Flyout.statements.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
 import Flyout from '../Flyout';
 import type { Character } from '../../types/types';
