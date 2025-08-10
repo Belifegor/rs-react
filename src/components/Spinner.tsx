@@ -1,6 +1,6 @@
 export default function Spinner({ label = 'Loading...' }: { label?: string }) {
   return (
-    <div role="status" aria-live="polite" className="flex items-center gap-2">
+    <div className="flex items-center gap-2">
       <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
         <circle
           cx="12"

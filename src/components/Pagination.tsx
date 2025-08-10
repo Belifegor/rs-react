@@ -1,22 +1,32 @@
+import { DOTS, type PageItem } from '../types/pagination';
+
 export const Pagination = ({
   currentPage,
   paginationRange,
   onPageChange,
 }: {
   currentPage: number;
-  paginationRange: (number | string)[];
+  paginationRange: PageItem[];
   onPageChange: (page: number) => void;
 }) => (
-  <div className="mt-4 flex justify-center gap-2 flex-wrap">
+  <nav
+    className="mt-4 flex justify-center gap-2 flex-wrap"
+    aria-label="Pagination"
+  >
     {paginationRange.map((item, index) =>
-      item === '...' ? (
-        <span key={`dots-${index}`} className="px-2 py-3">
-          ...
+      item === DOTS ? (
+        <span key={`dots-${index}`} className="px-2 py-3" aria-hidden="true">
+          …
         </span>
       ) : (
         <button
           key={`page-${item}`}
-          onClick={() => onPageChange(item as number)}
+          type="button"
+          onClick={() => onPageChange(item)}
+          aria-label={`Go to page ${item}`}
+          data-testid={`page-${item}`}
+          aria-current={item === currentPage ? 'page' : undefined}
+          disabled={item === currentPage}
           className={`px-3 py-1 rounded ${
             item === currentPage
               ? 'bg-blue-600 text-white'
@@ -27,5 +37,5 @@ export const Pagination = ({
         </button>
       )
     )}
-  </div>
+  </nav>
 );

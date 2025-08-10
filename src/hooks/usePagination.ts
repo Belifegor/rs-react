@@ -1,35 +1,28 @@
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { DOTS, type PageItem } from '../types/pagination';
 
-export const usePagination = (totalPages: number) => {
-  const navigate = useNavigate();
-  const { page = '1' } = useParams();
-  const currentPage = parseInt(page);
+export function usePagination(
+  totalPages: number,
+  currentPage: number,
+  delta = 1
+): { paginationRange: PageItem[] } {
+  return useMemo(() => {
+    const paginationRange: PageItem[] = [];
 
-  const goToPage = (newPage: number) => {
-    navigate(`/${newPage}`);
-  };
-
-  const paginationRange = useMemo(() => {
-    const range: (number | string)[] = [];
-    const delta = 1;
-    const left = Math.max(2, currentPage - delta);
-    const right = Math.min(totalPages - 1, currentPage + delta);
-
-    range.push(1);
-
-    if (left > 2) range.push('...');
-
-    for (let i = left; i <= right; i++) {
-      range.push(i);
+    if (totalPages <= 0) {
+      return { paginationRange };
     }
 
-    if (right < totalPages - 1) range.push('...');
+    const page = Math.max(1, Math.min(currentPage, totalPages));
+    const left = Math.max(2, page - delta);
+    const right = Math.min(totalPages - 1, page + delta);
 
-    if (totalPages > 1) range.push(totalPages);
+    paginationRange.push(1);
+    if (left > 2) paginationRange.push(DOTS);
+    for (let i = left; i <= right; i++) paginationRange.push(i);
+    if (right < totalPages - 1) paginationRange.push(DOTS);
+    if (totalPages > 1) paginationRange.push(totalPages);
 
-    return range;
-  }, [currentPage, totalPages]);
-
-  return { currentPage, goToPage, paginationRange };
-};
+    return { paginationRange };
+  }, [totalPages, currentPage, delta]);
+}

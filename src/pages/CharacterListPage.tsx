@@ -14,6 +14,7 @@ import LoadingOverlay from '../components/LoadingOverlay';
 export default function CharacterListPage() {
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
   const { page = '1', detailsId } = useParams();
+  const current = Number(page) || 1;
   const navigate = useNavigate();
   const selected = useStore((s) => s.selected);
 
@@ -31,11 +32,11 @@ export default function CharacterListPage() {
 
   const { data, isLoading, isError, error, isFetching } = useCharactersQuery(
     normalizedTerm,
-    page || '1'
+    String(current)
   );
 
   const totalPages = data?.info.pages || 0;
-  const { paginationRange } = usePagination(totalPages);
+  const { paginationRange } = usePagination(totalPages, current);
 
   useEffect(() => {
     if (data) {
@@ -89,9 +90,15 @@ export default function CharacterListPage() {
       </div>
 
       {!isLoading && !isError && results.length === 0 && (
-        <p className="text-stone-300">
-          No characters found. Try another query.
-        </p>
+        <div
+          role="alert"
+          aria-live="assertive"
+          data-testid="error"
+          style={{ color: 'red' }}
+        >
+          Error:{' '}
+          {(error as unknown as Error)?.message ?? 'Something went wrong'}
+        </div>
       )}
 
       {!isLoading && !isError && results.length > 0 && (
