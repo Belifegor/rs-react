@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react';
-import { useParams, useNavigate, Outlet } from 'react-router-dom';
 import Search from '../components/Search';
 import Card from '../components/Card';
 import { usePagination } from '../hooks/usePagination';
@@ -10,12 +9,18 @@ import Flyout from '../components/Flyout';
 import { useCharactersQuery } from '../hooks/useCharactersQuery';
 import RefreshButton from '../components/RefreshButton';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useRouter } from 'next/navigation';
 
-export default function CharacterListPage() {
+type Props = {
+  page?: string;
+  detailsId?: string;
+};
+
+export default function CharacterListPage({ page = '1', detailsId }: Props) {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useLocalStorage('search', '');
-  const { page = '1', detailsId } = useParams();
+
   const current = Number(page) || 1;
-  const navigate = useNavigate();
   const selected = useStore((s) => s.selected);
 
   const normalizedTerm = useMemo(
@@ -26,9 +31,9 @@ export default function CharacterListPage() {
   useEffect(() => {
     const pageNumber = Number(page);
     if (!Number.isFinite(pageNumber) || pageNumber < 1) {
-      navigate('/not-found');
+      router.push('/not-found');
     }
-  }, [page, navigate]);
+  }, [page, router]);
 
   const { data, isLoading, isError, error, isFetching } = useCharactersQuery(
     normalizedTerm,
@@ -42,21 +47,21 @@ export default function CharacterListPage() {
     if (data) {
       const pageNumber = Number(page);
       if (pageNumber > data.info.pages) {
-        navigate('/1', { replace: true });
+        router.replace('/1');
       }
     }
-  }, [data, page, navigate]);
+  }, [data, page, router]);
 
   const goToPage = (newPage: number) => {
     const newPath = detailsId ? `/${newPage}/${detailsId}` : `/${newPage}`;
-    navigate(newPath);
+    router.push(newPath);
   };
 
   const handleSearch = (term: string) => {
     const cleane = term.trim().toLowerCase();
     localStorage.setItem('search', cleane);
     setSearchTerm(cleane);
-    navigate(`/1`);
+    router.push(`/1`);
   };
 
   const results = data?.results ?? [];
@@ -108,9 +113,9 @@ export default function CharacterListPage() {
           onPageChange={goToPage}
         />
       )}
-      <div className="w-1/3 p-4 overflow-y-auto m-auto">
+      {/* <div className="w-1/3 p-4 overflow-y-auto m-auto">
         <Outlet />
-      </div>
+      </div> */}
     </div>
   );
 }
