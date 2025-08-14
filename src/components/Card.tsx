@@ -1,16 +1,30 @@
 import type { Character } from '../types/types';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useRouter, useParams } from 'next/navigation';
 import { useStore } from '../store/store';
 
 export default function Card({ character }: { character: Character }) {
-  const navigate = useNavigate();
-  const { page = '1' } = useParams();
+  const router = useRouter();
+  const params = useParams();
+
+  const page = Array.isArray(params?.page)
+    ? params.page[0]
+    : (params?.page ?? '1');
+
   const isSelected = useStore((s) => s.isSelected(character.id));
   const toggle = useStore((s) => s.toggle);
 
+  const handleCardClick = () => {
+    router.push(`/${page}/${character.id}`);
+  };
+
+  const handleCheckboxClick = (e: React.MouseEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    toggle(character.id);
+  };
+
   return (
     <div
-      onClick={() => navigate(`/${page}/${character.id}`)}
+      onClick={handleCardClick}
       className="relative bg-gray-700 shadow-md rounded-lg p-6 flex flex-col items-center"
       data-testid="card"
     >
@@ -29,7 +43,7 @@ export default function Card({ character }: { character: Character }) {
         type="checkbox"
         checked={isSelected}
         onChange={() => toggle(character.id)}
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleCheckboxClick}
         className="absolute bottom-3 right-3 scale-150 accent-blue-600 cursor-pointer"
       />
     </div>
