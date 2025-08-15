@@ -2,12 +2,12 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { ThemeProvider } from '../../utils/ThemeProvider';
-import '../index.css';
-import '../globals.css';
+import { ThemeProvider } from '../utils/ThemeProvider';
+import './index.css';
+import './globals.css';
 
-import App from '../../App';
-import MasterDetailWrapper from '../../components/MasterDetailWrapper';
+import App from '../App';
+import MasterDetailWrapper from '../components/MasterDetailWrapper';
 
 const queryClient = new QueryClient();
 
