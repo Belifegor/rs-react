@@ -1,6 +1,12 @@
 import CharacterListClient from '@/components/CharacterListClient';
+import type { RMResponse } from '@/types/types';
 
-async function getCharacters(query: string = '', page: string = '1') {
+export const dynamic = 'force-dynamic';
+
+async function getCharacters(
+  query: string = '',
+  page: string = '1'
+): Promise<RMResponse> {
   const params = new URLSearchParams({ page });
   if (query) {
     params.set('name', query);
@@ -8,24 +14,38 @@ async function getCharacters(query: string = '', page: string = '1') {
   const url = `https://rickandmortyapi.com/api/character/?${params.toString()}`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) {
-      return { info: { pages: 0, count: 0 }, results: [] };
+      return {
+        info: { pages: 0, count: 0, next: null, prev: null },
+        results: [],
+      };
     }
     return res.json();
   } catch (error) {
     console.error('Failed to fetch characters:', error);
-    return { info: { pages: 0, count: 0 }, results: [] };
+    return {
+      info: { pages: 0, count: 0, next: null, prev: null },
+      results: [],
+    };
   }
 }
 
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams?: { query?: string; page?: string };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const query = searchParams?.query || '';
-  const page = searchParams?.page || '1';
+  const awaitedSearchParams = await searchParams;
+
+  const query =
+    typeof awaitedSearchParams.query === 'string'
+      ? awaitedSearchParams.query
+      : '';
+  const page =
+    typeof awaitedSearchParams.page === 'string'
+      ? awaitedSearchParams.page
+      : '1';
 
   const initialData = await getCharacters(query, page);
 

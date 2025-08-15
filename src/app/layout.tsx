@@ -1,6 +1,7 @@
 import './globals.css';
 import './index.css';
 import type { Metadata } from 'next';
+import Providers from '@/app/providers';
 
 export const metadata: Metadata = {
   title: 'Rick and Morty',
@@ -14,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

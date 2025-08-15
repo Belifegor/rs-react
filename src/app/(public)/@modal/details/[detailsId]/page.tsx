@@ -1,4 +1,4 @@
-import ClientDetails from '@/app/(public)/details/[detailsId]/client';
+import ClientDetails from './client';
 
 async function getCharacter(id: string) {
   const res = await fetch(`https://rickandmortyapi.com/api/character/${id}`);

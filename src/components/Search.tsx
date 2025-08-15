@@ -1,12 +1,23 @@
 import { useState } from 'react';
-import type { PropsSearch } from '../types/types';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
-export default function Search({ initialValue, onSearch }: PropsSearch) {
+export default function Search() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const initialValue = searchParams?.get('query') || '';
+
   const [inputValue, setInputValue] = useState(initialValue);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    onSearch(inputValue);
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    if (inputValue) {
+      params.set('query', inputValue);
+    } else {
+      params.delete('query');
+    }
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
