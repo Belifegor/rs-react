@@ -11,12 +11,10 @@ function isValidLocale(locale: string): locale is Locale {
 
 export default async function RootLayout({
   children,
-  modal,
   params,
 }: {
   children: React.ReactNode;
-  modal: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
   const { locale } = await params;
 
@@ -30,10 +28,7 @@ export default async function RootLayout({
     <html lang={locale}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Providers>
-            {children}
-            {modal}
-          </Providers>
+          <Providers>{children}</Providers>
         </NextIntlClientProvider>
       </body>
     </html>
