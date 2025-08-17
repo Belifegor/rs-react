@@ -1,0 +1,9 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "about": "About"
+  },
+  "HomePage": {
+    "title": "Rick and Morty Characters"
+  }
+}
