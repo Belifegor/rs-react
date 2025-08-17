@@ -6,7 +6,7 @@ import {
   beforeEach,
   type MockInstance,
 } from 'vitest';
-import { fetchCharacters, fetchPageData } from '../../api/api';
+import { fetchCharacters, fetchPageData } from '../../lib/api';
 
 describe('rickAndMorty API', () => {
   let fetchSpy: MockInstance;

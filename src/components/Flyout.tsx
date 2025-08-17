@@ -1,41 +1,15 @@
 import { useStore } from '../store/store';
-import type { Character } from '../types/types';
 
-export default function Flyout({ items }: { items: Character[] }) {
+export default function Flyout() {
   const selected = useStore((s) => s.selected);
   const unselectAll = useStore((s) => s.unselectAll);
 
-  const selectedItems =
-    items?.filter((item) => selected.includes(item.id)) ?? [];
+  if (selected.length === 0) return null;
 
   const handleDownload = () => {
-    if (!selectedItems.length) return;
-
-    const csvRows = [
-      ['id', 'name', 'status', 'gender'],
-      ...selectedItems.map((item) => [
-        item.id,
-        item.name,
-        item.status,
-        item.gender,
-        `${window.location.origin}/${item.id}`,
-      ]),
-    ]
-      .map((row) => row.map(String).join(','))
-      .join('\n');
-
-    console.log('selectedItems', selectedItems);
-    const blob = new Blob([csvRows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${selected.length}_items.csv`;
-    document.body.appendChild(a);
-    setTimeout(() => {
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    }, 0);
+    if (!selected.length) return;
+    const query = selected.join(',');
+    window.location.href = `/api/export?ids=${query}`;
   };
   if (selected.length === 0) return null;
 
