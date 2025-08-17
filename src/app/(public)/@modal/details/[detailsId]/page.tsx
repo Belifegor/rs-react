@@ -9,13 +9,18 @@ async function getCharacter(id: string) {
 export default async function DetailsModalPage({
   params,
 }: {
-  params: { detailsId: string };
+  params: Promise<{ detailsId: string }>;
 }) {
-  const character = await getCharacter(params.detailsId);
+  const awaitedParams = await params;
+  const character = await getCharacter(awaitedParams.detailsId);
 
   if (!character) {
     return null;
   }
 
-  return <ClientDetails character={character} />;
+  return (
+    <div className="w-96 p-4 mt-16 md:mt-56">
+      <ClientDetails character={character} />
+    </div>
+  );
 }
