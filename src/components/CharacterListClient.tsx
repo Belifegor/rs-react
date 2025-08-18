@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import type { RMResponse, Character } from '@/types/types';
+import type { RMResponse } from '@/types/types';
 
 import Search from '@/components/Search';
 import Card from '@/components/Card';
@@ -43,7 +43,7 @@ export default function CharacterListClient({
   const { paginationRange } = usePagination(totalPages, currentPage);
 
   const goToPage = (newPage: number) => {
-    const params = new URLSearchParams(searchParams || '');
+    const params = new URLSearchParams(searchParams?.toString());
     params.set('page', String(newPage));
     router.push(`?${params.toString()}`);
   };
@@ -72,9 +72,8 @@ export default function CharacterListClient({
         {results.map((char) => (
           <Card key={char.id} character={char} />
         ))}
-        {selected.length > 0 && <Flyout items={results as Character[]} />}
       </div>
-
+      {selected.length > 0 && <Flyout />}
       {!isFetching && !isError && results.length === 0 && (
         <div
           role="alert"

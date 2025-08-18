@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import './globals.css';
 
 export const metadata = {
@@ -14,12 +15,12 @@ export default function GlobalNotFound() {
           <p className="mb-6 text-white-500">
             Sorry, this page does not exist.
           </p>
-          <a
+          <Link
             href="/"
             className="px-4 py-2 bg-orange-700 text-white rounded hover:bg-blue-700"
           >
             Go Home
-          </a>
+          </Link>
         </div>
       </body>
     </html>
