@@ -9,7 +9,7 @@ async function getCharacter(id: string) {
 export default async function DetailsModalPage({
   params,
 }: {
-  params: Promise<{ detailsId: string }>;
+  params: Promise<{ locale: string; detailsId: string }>;
 }) {
   const awaitedParams = await params;
   const character = await getCharacter(awaitedParams.detailsId);
