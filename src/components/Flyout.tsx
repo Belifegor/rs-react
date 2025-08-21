@@ -1,46 +1,22 @@
-import { useStore } from '../store/store';
-import type { Character } from '../types/types';
+'use client';
 
-export default function Flyout({ items }: { items: Character[] }) {
+import { useCallback } from 'react';
+import { useStore } from '../store/store';
+
+export default function Flyout() {
   const selected = useStore((s) => s.selected);
   const unselectAll = useStore((s) => s.unselectAll);
 
-  const selectedItems =
-    items?.filter((item) => selected.includes(item.id)) ?? [];
+  const handleDownload = useCallback(() => {
+    if (!selected.length) return;
+    const params = new URLSearchParams({ ids: selected.join(',') });
+    window.location.href = `/api/export?${params.toString()}`;
+  }, [selected]);
 
-  const handleDownload = () => {
-    if (!selectedItems.length) return;
-
-    const csvRows = [
-      ['id', 'name', 'status', 'gender'],
-      ...selectedItems.map((item) => [
-        item.id,
-        item.name,
-        item.status,
-        item.gender,
-        `${window.location.origin}/${item.id}`,
-      ]),
-    ]
-      .map((row) => row.map(String).join(','))
-      .join('\n');
-
-    console.log('selectedItems', selectedItems);
-    const blob = new Blob([csvRows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${selected.length}_items.csv`;
-    document.body.appendChild(a);
-    setTimeout(() => {
-      a.click();
-      window.URL.revokeObjectURL(url);
-      a.remove();
-    }, 0);
-  };
   if (selected.length === 0) return null;
 
   return (
-    <div className="fixed bottom-8 right-2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4 z-50">
+    <div className="fixed bottom-8 right-2 bg-gray-800 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4 z-50">
       <span>
         {selected.length} item{selected.length > 1 ? 's' : ''} selected
       </span>

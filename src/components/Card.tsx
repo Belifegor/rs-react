@@ -1,37 +1,49 @@
+'use client';
+
+import { Link } from '../i18n/navigation';
+import Image from 'next/image';
 import type { Character } from '../types/types';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useStore } from '../store/store';
 
 export default function Card({ character }: { character: Character }) {
-  const navigate = useNavigate();
-  const { page = '1' } = useParams();
   const isSelected = useStore((s) => s.isSelected(character.id));
   const toggle = useStore((s) => s.toggle);
 
   return (
     <div
-      onClick={() => navigate(`/${page}/${character.id}`)}
-      className="relative bg-gray-700 shadow-md rounded-lg p-6 flex flex-col items-center"
+      className="relative bg-gray-300 dark:bg-gray-600 shadow-md rounded-lg p-6 flex flex-col items-center transform hover:scale-105 transition-transform duration-200 cursor-pointer"
       data-testid="card"
     >
-      <img
-        src={character.image}
-        alt={character.name}
-        className="w-32 h-32 object-cover rounded-full mb-4"
-      />
-      <h2 className="text-lg font-semibold text-center text-stone-300">
-        {character.name}
-      </h2>
-      <p className="text-sm text-black-400 text-center">
-        {character.species}, {character.gender}
-      </p>
-      <input
-        type="checkbox"
-        checked={isSelected}
-        onChange={() => toggle(character.id)}
-        onClick={(e) => e.stopPropagation()}
-        className="absolute bottom-3 right-3 scale-150 accent-blue-600 cursor-pointer"
-      />
+      <Link
+        href={`/details/${character.id}`}
+        scroll={false}
+        className="flex flex-col items-center w-full"
+      >
+        <Image
+          src={character.image}
+          alt={character.name}
+          width={128}
+          height={128}
+          className="w-32 h-32 object-cover rounded-full mb-4"
+        />
+        <h2 className="text-lg font-semibold text-center text-black-300">
+          {character.name}
+        </h2>
+        <p className="text-sm text-black-400 text-center">
+          {character.species}, {character.gender}
+        </p>
+      </Link>
+      <label
+        className="absolute bottom-3 right-3 h-8 w-8 flex items-center justify-center
+                   cursor-pointer select-none"
+      >
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={() => toggle(character.id)}
+          className="absolute bottom-3 right-3 scale-150 accent-blue-600 cursor-pointer"
+        />
+      </label>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { ThemeProvider } from '../../utils/ThemeProvider';
+import { ThemeProvider } from '../../context/ThemeProvider';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 const setMatchMedia = (matches: boolean) => {

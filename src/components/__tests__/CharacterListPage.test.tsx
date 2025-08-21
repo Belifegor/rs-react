@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { MockedFunction } from 'vitest';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import CharacterPage from '../../pages/CharacterListPage';
-import { fetchCharacters, fetchPageData } from '../../api/api';
+import { fetchCharacters, fetchPageData } from '../../lib/api';
 import { renderWithClient } from './utils/renderWithClient';
 import type { RMResponse } from '../../types/types';
 

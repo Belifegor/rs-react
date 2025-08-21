@@ -1,5 +1,5 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { fetchCharacters } from '../api/api';
+import { fetchCharacters } from '../lib/api';
 import type { RMResponse } from '../types/types';
 
 export const useCharactersQuery = (term: string, page: string) => {
