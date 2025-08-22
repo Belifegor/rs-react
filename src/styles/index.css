@@ -56,6 +56,8 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.form-error { min-height: 1.25rem; }
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
