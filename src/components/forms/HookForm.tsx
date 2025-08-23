@@ -9,6 +9,7 @@ export const HookForm = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(schema),
+    mode: 'onChange',
     defaultValues: {
       name: '',
       age: undefined,
@@ -30,7 +31,6 @@ export const HookForm = () => {
       noValidate
       className="space-y-6 p-6 bg-neutral-900 rounded-xl shadow-lg max-w-lg mx-auto"
     >
-      {/* Имя */}
       <div>
         <label
           htmlFor="name"
@@ -49,7 +49,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Возраст */}
       <div>
         <label
           htmlFor="age"
@@ -68,7 +67,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Email */}
       <div>
         <label
           htmlFor="email"
@@ -87,7 +85,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Пароль */}
       <div>
         <label
           htmlFor="password"
@@ -108,7 +105,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Подтверждение пароля */}
       <div>
         <label
           htmlFor="confirmPassword"
@@ -129,7 +125,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Пол */}
       <div>
         <label
           htmlFor="gender"
@@ -152,7 +147,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Страна */}
       <div>
         <label
           htmlFor="country"
@@ -171,7 +165,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Файл изображения */}
       <div>
         <label
           htmlFor="imageFile"
@@ -193,7 +186,6 @@ export const HookForm = () => {
         )}
       </div>
 
-      {/* Согласие */}
       <div>
         <label className="inline-flex items-center gap-2 text-sm text-neutral-200">
           <input

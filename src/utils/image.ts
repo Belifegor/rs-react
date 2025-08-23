@@ -8,6 +8,6 @@ export const imageFileSchema = z
     const file = (v as FileList)?.[0] ?? (v as File);
     if (!file) return true;
     const okType = ['image/png', 'image/jpeg'].includes(file.type);
-    const okSize = file.size <= 3 * 1024 * 1024; // 3MB
+    const okSize = file.size <= 5 * 1024 * 1024;
     return okType && okSize;
   }, 'Only PNG/JPEG up to 3MB');
