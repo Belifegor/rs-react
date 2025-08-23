@@ -35,7 +35,9 @@ export default function Home() {
         {entries.map((e) => (
           <div
             key={e.id}
-            className={`rounded-2xl border border-neutral-800 p-4 ${lastId === e.id ? 'ring-2 ring-emerald-500' : ''}`}
+            className={`rounded-2xl border border-neutral-800 p-4 bg-emerald-900 ${
+              lastId === e.id ? 'ring-2 ring-emerald-500' : ''
+            }`}
           >
             {e.imageBase64 && (
               <img
@@ -45,10 +47,28 @@ export default function Home() {
               />
             )}
             <div className="space-y-1 text-sm">
-              <div className="font-semibold">{e.name}</div>
-              <div>{e.email}</div>
-              <div>{e.country}</div>
-              <div className="text-xs text-neutral-400">{e.source}</div>
+              <div>
+                <span className="font-semibold">Name:</span> {e.name}
+              </div>
+              <div>
+                <span className="font-semibold">Email:</span> {e.email}
+              </div>
+              <div>
+                <span className="font-semibold">Country:</span> {e.country}
+              </div>
+              <div>
+                <span className="font-semibold">Gender:</span> {e.gender}
+              </div>
+              <div>
+                <span className="font-semibold">Age:</span> {e.age}
+              </div>
+              <div>
+                <span className="font-semibold">Created:</span>{' '}
+                {new Date(e.createdAt).toLocaleString()}
+              </div>
+              <div className="text-[10px] uppercase tracking-wide text-neutral-500">
+                Source: {e.source}
+              </div>
             </div>
           </div>
         ))}

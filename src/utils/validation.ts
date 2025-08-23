@@ -14,7 +14,7 @@ export const schema = z
     confirmPassword: z.string().min(1, 'Confirm password'),
     gender: z.enum(['male', 'female', 'other'], { message: 'Select gender' }),
     acceptedTnC: z.literal(true, { message: 'You must accept T&C' }),
-    country: z.string().min(1, 'Select country'),
+    country: z.string().trim().min(1, 'Select country'),
     imageFile: imageFileSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {

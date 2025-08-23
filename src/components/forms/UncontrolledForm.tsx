@@ -50,7 +50,7 @@ export default function UncontrolledForm({ onSuccess }: Props) {
       confirmPassword: confirmPasswordRef.current?.value ?? '',
       gender: genderRef.current?.value ?? undefined,
       acceptedTnC: acceptedTnCRef.current?.checked ?? false,
-      country: countryRef.current?.value ?? '',
+      country: country.trim(),
       imageFile: imageFileRef.current?.files,
     };
 
@@ -97,10 +97,6 @@ export default function UncontrolledForm({ onSuccess }: Props) {
       noValidate
       className="space-y-6 p-6 bg-neutral-900 rounded-xl shadow-lg max-w-lg mx-auto"
     >
-      <h2 className="text-xl font-semibold text-neutral-100">
-        Uncontrolled Form
-      </h2>
-
       <div>
         <label
           htmlFor="name-uncontrolled"

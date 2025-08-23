@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { trapFocusKeydown } from '../../utils/trapFocus';
 
 interface Props {
   isOpen: boolean;
@@ -8,6 +9,12 @@ interface Props {
   initialFocusRef?: React.RefObject<HTMLElement>;
   children: React.ReactNode;
 }
+
+const modalRoot = (() => {
+  const el = document.getElementById('modal-root');
+  if (!el) throw new Error("Missing <div id='modal-root'></div> in index.html");
+  return el;
+})();
 
 export default function Modal({
   isOpen,
@@ -18,6 +25,7 @@ export default function Modal({
 }: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -39,6 +47,15 @@ export default function Modal({
   }, [isOpen, onClose, initialFocusRef]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
     if (!isOpen && previouslyFocused.current) previouslyFocused.current.focus();
   }, [isOpen]);
 
@@ -53,10 +70,12 @@ export default function Modal({
       }}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
         className="w-full max-w-lg rounded-2xl bg-neutral-900 p-6 shadow-2xl outline-none"
+        onKeyDown={(e) => trapFocusKeydown(e, dialogRef.current)}
         onMouseDown={(e) => e.stopPropagation()}
       >
         {title && (
@@ -67,7 +86,6 @@ export default function Modal({
         {children}
       </div>
     </div>,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    document.getElementById('modal-root')!
+    modalRoot
   );
 }
