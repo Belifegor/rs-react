@@ -95,7 +95,7 @@ export default function UncontrolledForm({ onSuccess }: Props) {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="space-y-6 p-6 bg-neutral-900 rounded-xl shadow-lg max-w-lg mx-auto"
+      className="space-y-3 p-6 bg-neutral-900 rounded-xl shadow-lg max-w-lg mx-auto"
     >
       <div>
         <label

@@ -8,7 +8,11 @@ export const schema = z
       .string()
       .min(1, 'Enter name')
       .regex(/^[A-Z][A-Za-z\s'-]*$/, 'First letter must be uppercase'),
-    age: z.coerce.number().int('Integer only').min(0, 'No negatives'),
+    age: z.coerce
+      .number()
+      .int('Integer only')
+      .min(12, 'Минимальный возраст — 12 лет')
+      .max(100, 'Максимальный возраст — 100 лет'),
     email: z.string().trim().toLowerCase().pipe(z.email()),
     password: passwordRules,
     confirmPassword: z.string().min(1, 'Confirm password'),

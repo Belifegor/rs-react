@@ -74,7 +74,7 @@ export default function Modal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'modal-title' : undefined}
-        className="w-full max-w-lg rounded-2xl bg-neutral-900 p-6 shadow-2xl outline-none"
+        className="w-full max-w-lg rounded-2xl bg-neutral-900 p-6 shadow-2xl outline-none max-h-[85vh] overflow-y-auto"
         onKeyDown={(e) => trapFocusKeydown(e, dialogRef.current)}
         onMouseDown={(e) => e.stopPropagation()}
       >

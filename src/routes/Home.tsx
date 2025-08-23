@@ -35,8 +35,8 @@ export default function Home() {
         {entries.map((e) => (
           <div
             key={e.id}
-            className={`rounded-2xl border border-neutral-800 p-4 bg-emerald-900 ${
-              lastId === e.id ? 'ring-2 ring-emerald-500' : ''
+            className={`rounded-2xl border p-4 bg-emerald-900 transition-colors ${
+              lastId === e.id ? 'new-card' : 'border-neutral-800'
             }`}
           >
             {e.imageBase64 && (

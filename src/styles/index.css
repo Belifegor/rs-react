@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -56,7 +56,9 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-.form-error { min-height: 1.25rem; }
+.form-error {
+  min-height: 1.25rem;
+}
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -69,4 +71,17 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+@keyframes flash {
+  0% {
+    background-color: rgba(16, 185, 129, 0.2);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+.new-card {
+  animation: flash 2.5s ease-out forwards;
+  border-color: rgb(16 185 129 / 1);
 }
