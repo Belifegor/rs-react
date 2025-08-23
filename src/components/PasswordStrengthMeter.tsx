@@ -1,9 +1,9 @@
 import { getPasswordStrengthProps } from '../utils/passwordUtils';
 
 export const PasswordStrengthMeter = ({ score }: { score: number }) => {
-  const { label, color } = getPasswordStrengthProps(score);
+  if (score === 0) return null;
 
-  if (!label) return null;
+  const { label, color } = getPasswordStrengthProps(score);
 
   return <div style={{ fontSize: '12px', color }}>Сложность: {label}</div>;
 };

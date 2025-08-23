@@ -5,6 +5,14 @@ import { calculatePasswordStrength } from '../../utils/PasswordStrength';
 import { fileToBase64 } from '../../utils/fileToBase64';
 import { PasswordStrengthMeter } from '../PasswordStrengthMeter';
 import { useFormsStore } from '../../store/useFormsStore';
+import { Field } from '../ui/Field';
+import { FieldError } from '../ui/FieldError';
+import {
+  inputClass,
+  selectClass,
+  fileClass,
+  checkboxClass,
+} from '../ui/formClasses';
 
 type Props = { onSuccess?: () => void };
 
@@ -97,157 +105,109 @@ export default function UncontrolledForm({ onSuccess }: Props) {
       noValidate
       className="space-y-3 p-6 bg-neutral-900 rounded-xl shadow-lg max-w-lg mx-auto"
     >
-      <div>
-        <label
-          htmlFor="name-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Имя
-        </label>
+      <Field label="Имя" htmlFor="name-uncontrolled" error={errors.name?.[0]}>
         <input
           id="name-uncontrolled"
           type="text"
           ref={nameRef}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+          className={inputClass}
         />
-        {errors.name && (
-          <p className="mt-1 text-xs text-rose-400">{errors.name[0]}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label
-          htmlFor="age-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Возраст
-        </label>
+      <Field label="Возраст" htmlFor="age-uncontrolled" error={errors.age?.[0]}>
         <input
           id="age-uncontrolled"
           type="number"
           ref={ageRef}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+          className={inputClass}
         />
-        {errors.age && (
-          <p className="mt-1 text-xs text-rose-400">{errors.age[0]}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label
-          htmlFor="email-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Email
-        </label>
+      <Field
+        label="Email"
+        htmlFor="email-uncontrolled"
+        error={errors.email?.[0]}
+      >
         <input
           id="email-uncontrolled"
           type="email"
           ref={emailRef}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+          className={inputClass}
         />
-        {errors.email && (
-          <p className="mt-1 text-xs text-rose-400">{errors.email[0]}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label
-          htmlFor="password-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Пароль
-        </label>
+      <Field
+        label="Пароль"
+        htmlFor="password-uncontrolled"
+        error={errors.password?.[0]}
+      >
         <input
           id="password-uncontrolled"
           type="password"
           ref={passwordRef}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+          className={inputClass}
         />
+      </Field>
+      <div className="mt-0.5">
         <PasswordStrengthMeter score={strengthScore} />
-        {errors.password && (
-          <p className="mt-1 text-xs text-rose-400">{errors.password[0]}</p>
-        )}
       </div>
 
-      <div>
-        <label
-          htmlFor="confirmPassword-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Подтвердите пароль
-        </label>
+      <Field
+        label="Подтвердите пароль"
+        htmlFor="confirmPassword-uncontrolled"
+        error={errors.confirmPassword?.[0]}
+      >
         <input
           id="confirmPassword-uncontrolled"
           type="password"
           ref={confirmPasswordRef}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+          className={inputClass}
         />
-        {errors.confirmPassword && (
-          <p className="mt-1 text-xs text-rose-400">
-            {errors.confirmPassword[0]}
-          </p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label
-          htmlFor="gender-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Пол
-        </label>
+      <Field
+        label="Пол"
+        htmlFor="gender-uncontrolled"
+        error={errors.gender?.[0]}
+      >
         <select
           id="gender-uncontrolled"
           ref={genderRef}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+          className={selectClass}
         >
           <option value="">Выберите...</option>
           <option value="male">Мужской</option>
           <option value="female">Женский</option>
           <option value="other">Другой</option>
         </select>
-        {errors.gender && (
-          <p className="mt-1 text-xs text-rose-400">{errors.gender[0]}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label
-          htmlFor="country-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Страна
-        </label>
+      <Field
+        label="Страна"
+        htmlFor="country-uncontrolled"
+        error={errors.country?.[0]}
+      >
         <CountryAutocomplete
           value={country}
           onChange={setCountry}
           inputId="country-uncontrolled"
         />
-        {errors.country && (
-          <p className="mt-1 text-xs text-rose-400">{errors.country[0]}</p>
-        )}
-      </div>
+      </Field>
 
-      <div>
-        <label
-          htmlFor="imageFile-uncontrolled"
-          className="block text-sm font-medium text-neutral-200"
-        >
-          Изображение профиля (до 3MB)
-        </label>
+      <Field
+        label="Изображение профиля (до 3MB)"
+        htmlFor="imageFile-uncontrolled"
+        error={errors.imageFile?.[0]}
+      >
         <input
           id="imageFile-uncontrolled"
           type="file"
           accept="image/png, image/jpeg"
           ref={imageFileRef}
-          className="mt-1 block w-full text-sm text-neutral-100 file:mr-3 file:rounded-md file:bg-neutral-700 file:px-3 file:py-1 file:text-neutral-100"
+          className={fileClass}
         />
-        {errors.imageFile && (
-          <p className="mt-1 text-xs text-rose-400">{errors.imageFile[0]}</p>
-        )}
-      </div>
+      </Field>
 
       <div>
         <label className="inline-flex items-center gap-2 text-sm text-neutral-200">
@@ -255,13 +215,11 @@ export default function UncontrolledForm({ onSuccess }: Props) {
             id="tnc-uncontrolled"
             type="checkbox"
             ref={acceptedTnCRef}
-            className="rounded bg-neutral-800"
+            className={checkboxClass}
           />
           Я принимаю Условия и Положения
         </label>
-        {errors.acceptedTnC && (
-          <p className="mt-1 text-xs text-rose-400">{errors.acceptedTnC[0]}</p>
-        )}
+        <FieldError msg={errors.acceptedTnC?.[0]} />
       </div>
 
       <button
@@ -269,7 +227,7 @@ export default function UncontrolledForm({ onSuccess }: Props) {
         disabled={isSubmitting}
         className="w-full rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
       >
-        {isSubmitting ? 'Отправка...' : 'Отправить'}
+        {isSubmitting ? 'Отправка...' : 'Зарегистрироваться'}
       </button>
     </form>
   );
