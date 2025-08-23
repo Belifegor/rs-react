@@ -1,13 +1,35 @@
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import CountryAutocomplete from '../forms/CountryAutocomplete';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
+import { useFormsStore } from '../../store/useFormsStore';
+import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { schema, type FormValues } from '../../utils/validation';
+import { PasswordStrengthMeter } from '../PasswordStrengthMeter';
+import { calculatePasswordStrength } from '../../utils/PasswordStrength';
+import { fileToBase64 } from '../../utils/fileToBase64';
+import {
+  schema,
+  type FormInput,
+  type FormValues,
+} from '../../utils/validation';
 
-export const HookForm = () => {
+type Props = { onSuccess?: () => void };
+
+function firstFile(v: unknown): File | undefined {
+  if (!v) return undefined;
+  if (v instanceof FileList) return v[0] ?? undefined;
+  if (v instanceof File) return v;
+  if (Array.isArray(v) && v[0] instanceof File) return v[0];
+  return undefined;
+}
+
+export const HookForm = ({ onSuccess }: Props) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
+    watch,
+    control,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<FormInput, undefined, FormValues>({
     resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
@@ -21,8 +43,29 @@ export const HookForm = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log('Form data:', data);
+  const pwd = watch('password') ?? '';
+  const strengthScore = useMemo(() => calculatePasswordStrength(pwd), [pwd]);
+
+  const addEntry = useFormsStore((s) => s.addEntry);
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const file = firstFile(data.imageFile);
+    const imageBase64 = file ? await fileToBase64(file) : undefined;
+
+    addEntry({
+      id: crypto.randomUUID(),
+      name: data.name,
+      age: data.age,
+      email: data.email,
+      gender: data.gender,
+      acceptedTnC: data.acceptedTnC,
+      country: data.country,
+      imageBase64,
+      source: 'rhf',
+      createdAt: Date.now(),
+    });
+
+    onSuccess?.();
   };
 
   return (
@@ -98,6 +141,7 @@ export const HookForm = () => {
           {...register('password')}
           className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
         />
+        <PasswordStrengthMeter score={strengthScore} />
         {errors.password && (
           <p className="mt-1 text-xs text-rose-400">
             {errors.password.message}
@@ -154,12 +198,19 @@ export const HookForm = () => {
         >
           Страна
         </label>
-        <input
-          id="country"
-          type="text"
-          {...register('country')}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+        <Controller
+          name="country"
+          control={control}
+          render={({ field }) => (
+            <CountryAutocomplete
+              inputId="country"
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Начните вводить страну..."
+            />
+          )}
         />
+
         {errors.country && (
           <p className="mt-1 text-xs text-rose-400">{errors.country.message}</p>
         )}
@@ -204,7 +255,7 @@ export const HookForm = () => {
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={!isValid || isSubmitting}
         className="w-full rounded-lg bg-emerald-600 px-4 py-2 font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
       >
         {isSubmitting ? 'Отправка...' : 'Зарегистрироваться'}

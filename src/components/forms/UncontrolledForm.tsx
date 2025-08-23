@@ -1,10 +1,14 @@
-import { useRef, useState, useMemo, type FormEvent } from 'react';
+import { useRef, useState, useEffect, useMemo, type FormEvent } from 'react';
 import { schema } from '../../utils/validation';
+import CountryAutocomplete from '../forms/CountryAutocomplete';
 import { calculatePasswordStrength } from '../../utils/PasswordStrength';
 import { fileToBase64 } from '../../utils/fileToBase64';
 import { PasswordStrengthMeter } from '../PasswordStrengthMeter';
+import { useFormsStore } from '../../store/useFormsStore';
 
-export default function UncontrolledForm() {
+type Props = { onSuccess?: () => void };
+
+export default function UncontrolledForm({ onSuccess }: Props) {
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -21,10 +25,17 @@ export default function UncontrolledForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [password, setPassword] = useState('');
 
+  const addEntry = useFormsStore((s) => s.addEntry);
+
   const strengthScore = useMemo(
     () => calculatePasswordStrength(password),
     [password]
   );
+
+  const [country, setCountry] = useState('');
+  useEffect(() => {
+    if (countryRef.current) countryRef.current.value = country;
+  }, [country]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -59,12 +70,20 @@ export default function UncontrolledForm() {
         imageBase64 = await fileToBase64(validatedData.imageFile[0]);
       }
 
-      const finalData = {
-        ...validatedData,
-        imageFile: imageBase64,
-      };
+      addEntry({
+        id: crypto.randomUUID(),
+        name: validatedData.name,
+        age: validatedData.age,
+        email: validatedData.email,
+        gender: validatedData.gender,
+        acceptedTnC: validatedData.acceptedTnC,
+        country: validatedData.country,
+        imageBase64,
+        source: 'uncontrolled',
+        createdAt: Date.now(),
+      });
 
-      console.log('ДАННЫЕ ГОТОВЫ К ОТПРАВКЕ:', finalData);
+      onSuccess?.();
     } catch (error) {
       console.error('Ошибка при обработке формы:', error);
     } finally {
@@ -205,11 +224,10 @@ export default function UncontrolledForm() {
         >
           Страна
         </label>
-        <input
-          id="country-uncontrolled"
-          type="text"
-          ref={countryRef}
-          className="mt-1 w-full rounded-md bg-neutral-800 px-3 py-2 text-neutral-100 outline-none ring-1 ring-neutral-700 focus:ring-emerald-500"
+        <CountryAutocomplete
+          value={country}
+          onChange={setCountry}
+          inputId="country-uncontrolled"
         />
         {errors.country && (
           <p className="mt-1 text-xs text-rose-400">{errors.country[0]}</p>

@@ -11,7 +11,8 @@ export default function Home() {
   const lastId = useFormsStore(selectLastCreatedId);
 
   useEffect(() => {
-    const t = setTimeout(() => useFormsStore.getState().clearHighlight(), 3500);
+    if (!lastId) return;
+    const t = setTimeout(() => useFormsStore.getState().clearHighlight(), 2500);
     return () => clearTimeout(t);
   }, [lastId]);
 
@@ -58,14 +59,14 @@ export default function Home() {
         onClose={() => setOpen(null)}
         title="Uncontrolled Form"
       >
-        <UncontrolledForm />
+        <UncontrolledForm onSuccess={() => setOpen(null)} />
       </Modal>
       <Modal
         isOpen={open === 'rhf'}
         onClose={() => setOpen(null)}
         title="React Hook Form"
       >
-        <HookForm />
+        <HookForm onSuccess={() => setOpen(null)} />
       </Modal>
     </div>
   );
