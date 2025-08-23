@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal from '../components/modal/Modal';
 import UncontrolledForm from '../components/forms/UncontrolledForm';
-import HookForm from '../components/forms/HookForm';
+import { HookForm } from '../components/forms/HookForm';
 import { useFormsStore } from '../store/useFormsStore';
 import { selectEntries, selectLastCreatedId } from '../store/selectors';
 
