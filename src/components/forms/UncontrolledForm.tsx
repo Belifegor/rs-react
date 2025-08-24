@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useMemo, type FormEvent } from 'react';
 import { schema } from '../../utils/validation';
 import CountryAutocomplete from '../forms/CountryAutocomplete';
-import { calculatePasswordStrength } from '../../utils/PasswordStrength';
+import { calculatePasswordStrength } from '../../utils/passwordStrength';
 import { fileToBase64 } from '../../utils/fileToBase64';
 import { PasswordStrengthMeter } from '../PasswordStrengthMeter';
 import { useFormsStore } from '../../store/useFormsStore';

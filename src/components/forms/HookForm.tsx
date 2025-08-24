@@ -4,7 +4,7 @@ import { useFormsStore } from '../../store/useFormsStore';
 import { useMemo } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PasswordStrengthMeter } from '../PasswordStrengthMeter';
-import { calculatePasswordStrength } from '../../utils/PasswordStrength';
+import { calculatePasswordStrength } from '../../utils/passwordStrength';
 import { fileToBase64 } from '../../utils/fileToBase64';
 import { FieldError } from '../ui/FieldError';
 import { Field } from '../ui/Field';

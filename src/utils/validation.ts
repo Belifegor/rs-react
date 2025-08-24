@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { passwordRules } from './password';
-import { imageFileSchema } from './image';
+import { imageFileSchema } from './imageFileSchema';
 
 export const schema = z
   .object({
@@ -11,8 +11,8 @@ export const schema = z
     age: z.coerce
       .number()
       .int('Integer only')
-      .min(12, 'Минимальный возраст — 12 лет')
-      .max(100, 'Максимальный возраст — 100 лет'),
+      .min(12, 'Minimum age — 12 years')
+      .max(100, 'Maximum age — 100 years'),
     email: z.string().trim().toLowerCase().pipe(z.email()),
     password: passwordRules,
     confirmPassword: z.string().min(1, 'Confirm password'),
