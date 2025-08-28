@@ -1,7 +1,6 @@
 ## Performance Profiling Task
 
 1. **Initial Profiling with React Dev Tools Profiler**
-
    - Use the React Dev Tools Profiler to measure the performance of your application (e.g., sorting a column, searching a country, selecting another year, adding/removing columns).
    - Record interactions and analyze the results.
    - Put a brief description of the app performance, including screenshots from the Profiler, in the app's `README.md` file.
