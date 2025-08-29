@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import type { Co2Dataset } from "./types/co2";
+import type { Co2Dataset, YearRecord } from "./types/co2";
 import "./App.css";
 
 export default function App() {
@@ -7,6 +7,8 @@ export default function App() {
   const [error, setError] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [search, setSearch] = useState<string>("");
+  const [sortBy, setSortBy] = useState<"name" | "population">("name");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     let mounted = true;
@@ -36,14 +38,46 @@ export default function App() {
 
   const normalizedSearch = search.trim().toLowerCase();
 
+  function getPopulationForYear(
+    rows: YearRecord[],
+    year: number,
+  ): number | undefined {
+    const rec = rows.find((r) => r.year === year);
+    return rec?.population;
+  }
+
   const countries = useMemo(() => {
     if (!data) return [];
+
     const names = Object.keys(data);
     const filtered = normalizedSearch
       ? names.filter((n) => n.toLowerCase().includes(normalizedSearch))
       : names;
-    return filtered.sort((a, b) => a.localeCompare(b));
-  }, [data, normalizedSearch]);
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortBy === "name") {
+        const cmp = a.localeCompare(b);
+        return sortDir === "asc" ? cmp : -cmp;
+      }
+
+      if (selectedYear == null) return 0;
+
+      const aPop = getPopulationForYear(data[a] ?? [], selectedYear);
+      const bPop = getPopulationForYear(data[b] ?? [], selectedYear);
+
+      if (aPop == null && bPop == null) {
+        const byName = a.localeCompare(b);
+        return sortDir === "asc" ? byName : -byName;
+      }
+      if (aPop == null) return 1;
+      if (bPop == null) return -1;
+
+      const cmp = aPop - bPop;
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return sorted;
+  }, [data, normalizedSearch, sortBy, sortDir, selectedYear]);
 
   if (error) return <div className="error">Error: {error}</div>;
   if (!data || selectedYear === null)
@@ -61,7 +95,7 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>CO₂ Emissions Data</h1>
+      <h1>CO2 Emissions Data</h1>
 
       <div style={{ marginBottom: 12 }}>
         <input
@@ -75,19 +109,41 @@ export default function App() {
       </div>
 
       {hasResults && (
-        <label>
-          Year:&nbsp;
-          <select
-            value={selectedYear ?? ""}
-            onChange={(e) => setSelectedYear(Number(e.target.value))}
+        <>
+          <label>
+            Year:&nbsp;
+            <select
+              value={selectedYear ?? ""}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+            >
+              {allYears.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Sort by:&nbsp;
+            <select
+              value={sortBy}
+              onChange={(e) =>
+                setSortBy(e.target.value as "name" | "population")
+              }
+            >
+              <option value="name">name</option>
+              <option value="population">population</option>
+            </select>
+          </label>
+
+          <button
+            type="button"
+            onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
+            aria-label="toggle sort direction"
           >
-            {allYears.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
-        </label>
+            {sortDir === "asc" ? "↑ asc" : "↓ desc"}
+          </button>
+        </>
       )}
 
       {!hasResults ? (
@@ -112,7 +168,7 @@ export default function App() {
                 <th>year</th>
                 <th>population</th>
                 <th>co2</th>
-                <th>co2_per_capita</th>
+                <th>co2PerCapita</th>
               </tr>
             </thead>
             <tbody>

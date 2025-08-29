@@ -4,7 +4,12 @@
     { "year": 2020, "population": 2617820, "co2": 6.2, "co2_per_capita": 2.37 }
   ],
   "Switzerland": [
-    { "year": 2019, "population": 8606033, "co2": 35.8, "co2_per_capita": 4.16 },
+    {
+      "year": 2019,
+      "population": 8606033,
+      "co2": 35.8,
+      "co2_per_capita": 4.16
+    },
     { "year": 2020, "population": 8632703, "co2": 32.4, "co2_per_capita": 3.76 }
   ]
 }

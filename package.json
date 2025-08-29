@@ -22,8 +22,13 @@
     "zustand": "^5.0.8"
   },
   "lint-staged": {
-   "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-    "*.{js,jsx,json,css,md}": ["prettier --write"]
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,jsx,json,css,md}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

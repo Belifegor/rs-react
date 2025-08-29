@@ -6,5 +6,3 @@ export type YearRecord = {
 };
 
 export type Co2Dataset = Record<string, YearRecord[]>;
-
-
