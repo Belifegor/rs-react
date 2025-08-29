@@ -53,6 +53,6 @@
   }
   .flash {
     background: rgba(250, 204, 21, 0.18);
-    transition: background 0.5s;
+    transition: background 1s;
   }
 }

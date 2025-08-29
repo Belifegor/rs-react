@@ -1,4 +1,10 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useDeferredValue
+} from "react";
 import type { Co2Dataset, YearRecord } from "./types/co2";
 import { CountryCard } from "./components/CountryCard";
 import { CountryList } from "./components/CountryList";
@@ -40,7 +46,8 @@ export default function App() {
     if (latest !== undefined) setSelectedYear(latest);
   }, [data]);
 
-  const normalizedSearch = search.trim().toLowerCase();
+  const deferredSearch = useDeferredValue(search);
+  const normalizedSearch = deferredSearch.trim().toLowerCase();
 
   function getPopulationForYear(
     rows: YearRecord[],
