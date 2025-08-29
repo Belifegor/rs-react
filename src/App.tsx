@@ -3,7 +3,7 @@ import {
   useEffect,
   useMemo,
   useCallback,
-  useDeferredValue
+  useDeferredValue,
 } from "react";
 import type { Co2Dataset, YearRecord } from "./types/co2";
 import { CountryCard } from "./components/CountryCard";
@@ -19,6 +19,10 @@ export default function App() {
   const [sortBy, setSortBy] = useState<"name" | "population">("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [activeCountry, setActiveCountry] = useState<string>("");
+  const [visibleCount, setVisibleCount] = useState(20);
+
+  const deferredSearch = useDeferredValue(search);
+  const normalizedSearch = deferredSearch.trim().toLowerCase();
 
   useEffect(() => {
     let mounted = true;
@@ -46,12 +50,13 @@ export default function App() {
     if (latest !== undefined) setSelectedYear(latest);
   }, [data]);
 
-  const deferredSearch = useDeferredValue(search);
-  const normalizedSearch = deferredSearch.trim().toLowerCase();
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [normalizedSearch]);
 
   function getPopulationForYear(
     rows: YearRecord[],
-    year: number,
+    year: number
   ): number | undefined {
     const rec = rows.find((r) => r.year === year);
     return rec?.population;
@@ -90,6 +95,11 @@ export default function App() {
     return sorted;
   }, [data, normalizedSearch, sortBy, sortDir, selectedYear]);
 
+  const visibleCountries = useMemo(
+    () => countries.slice(0, visibleCount),
+    [countries, visibleCount]
+  );
+
   useEffect(() => {
     if (countries.length === 0) {
       if (activeCountry !== "") setActiveCountry("");
@@ -103,6 +113,35 @@ export default function App() {
   const handleSelectCountry = useCallback((name: string) => {
     setActiveCountry(name);
   }, []);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearch(e.target.value);
+    },
+    []
+  );
+
+  const handleYearChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSelectedYear(Number(e.target.value));
+    },
+    []
+  );
+
+  const handleSortByChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSortBy(e.target.value as "name" | "population");
+    },
+    []
+  );
+
+  const handleSortDirToggle = useCallback(() => {
+    setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+  }, []);
+
+  const handleShowMore = useCallback(() => {
+    setVisibleCount((c) => Math.min(c + 20, countries.length));
+  }, [countries.length]);
 
   if (error) return <div className="error">Error: {error}</div>;
   if (!data || selectedYear === null)
@@ -135,14 +174,14 @@ export default function App() {
               className="input"
               placeholder="Search country…"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
             />
             <span className="muted whitespace-nowrap">{`Found: ${countries.length}`}</span>
           </div>
 
           <div className="mt-2">
             <CountryList
-              countries={countries}
+              countries={visibleCountries}
               active={activeCountry}
               onSelect={handleSelectCountry}
             />
@@ -158,7 +197,7 @@ export default function App() {
                   <select
                     className="select"
                     value={selectedYear ?? ""}
-                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                    onChange={handleYearChange}
                   >
                     {allYears.map((y) => (
                       <option key={y} value={y}>
@@ -174,9 +213,7 @@ export default function App() {
                     <select
                       className="select"
                       value={sortBy}
-                      onChange={(e) =>
-                        setSortBy(e.target.value as "name" | "population")
-                      }
+                      onChange={handleSortByChange}
                     >
                       <option value="name">name</option>
                       <option value="population">population</option>
@@ -186,9 +223,7 @@ export default function App() {
                   <button
                     type="button"
                     className="btn"
-                    onClick={() =>
-                      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
-                    }
+                    onClick={handleSortDirToggle}
                     aria-label="toggle sort direction"
                   >
                     {sortDir === "asc" ? "↑ desc" : "↓ asc"}
@@ -212,6 +247,20 @@ export default function App() {
             </div>
           )}
         </section>
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-xs text-slate-400">
+            Showing {Math.min(visibleCount, countries.length)} of{" "}
+            {countries.length}
+          </span>
+          <button
+            type="button"
+            className="btn"
+            onClick={handleShowMore}
+            disabled={visibleCount >= countries.length}
+          >
+            Show more
+          </button>
+        </div>
       </div>
     </div>
   );
