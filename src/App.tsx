@@ -1,6 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import type { Co2Dataset, YearRecord } from "./types/co2";
-import "./App.css";
+import { CountryCard } from "./components/CountryCard";
+import { CountryList } from "./components/CountryList";
+import { YearTable } from "./components/YearTable";
+import "./index.css";
 
 export default function App() {
   const [data, setData] = useState<Co2Dataset | null>(null);
@@ -9,6 +12,7 @@ export default function App() {
   const [search, setSearch] = useState<string>("");
   const [sortBy, setSortBy] = useState<"name" | "population">("name");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [activeCountry, setActiveCountry] = useState<string>("");
 
   useEffect(() => {
     let mounted = true;
@@ -79,6 +83,20 @@ export default function App() {
     return sorted;
   }, [data, normalizedSearch, sortBy, sortDir, selectedYear]);
 
+  useEffect(() => {
+    if (countries.length === 0) {
+      if (activeCountry !== "") setActiveCountry("");
+      return;
+    }
+    if (!activeCountry || !countries.includes(activeCountry)) {
+      setActiveCountry(countries[0]);
+    }
+  }, [countries, activeCountry]);
+
+  const handleSelectCountry = useCallback((name: string) => {
+    setActiveCountry(name);
+  }, []);
+
   if (error) return <div className="error">Error: {error}</div>;
   if (!data || selectedYear === null)
     return <div className="loading">Loading...</div>;
@@ -89,101 +107,105 @@ export default function App() {
   const allYears = hasResults
     ? [...new Set(rows.map((r) => r.year))].sort((a, b) => a - b)
     : [];
-  const current = hasResults
-    ? rows.find((r) => r.year === selectedYear)
-    : undefined;
+
+  const population = getPopulationForYear(rows, selectedYear);
 
   return (
-    <div className="App">
-      <h1>CO2 Emissions Data</h1>
+    <div className="mx-auto max-w-7xl p-6 space-y-4">
+      <header className="sticky top-0 z-10 -mx-6 border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-6 py-3">
+          <h1>CO₂ Emissions Data</h1>
+        </div>
+      </header>
 
-      <div style={{ marginBottom: 12 }}>
-        <input
-          placeholder="Search country…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <span style={{ marginLeft: 8, opacity: 0.8 }}>
-          Found: {countries.length}
-        </span>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[300px,1fr]">
+        <aside className="card">
+          <label className="mb-1 block text-sm font-medium text-slate-300">
+            Search
+          </label>
+          <div className="mb-3 flex items-center gap-2">
+            <input
+              className="input"
+              placeholder="Search country…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <span className="muted whitespace-nowrap">{`Found: ${countries.length}`}</span>
+          </div>
+
+          <div className="mt-2">
+            <CountryList
+              countries={countries}
+              active={activeCountry}
+              onSelect={handleSelectCountry}
+            />
+          </div>
+        </aside>
+
+        <section className="space-y-4">
+          {hasResults ? (
+            <>
+              <div className="toolbar">
+                <label className="flex items-center gap-2 text-sm">
+                  <span className="muted">Year</span>
+                  <select
+                    className="select"
+                    value={selectedYear ?? ""}
+                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  >
+                    {allYears.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <div className="ml-auto flex items-center gap-3">
+                  <label className="flex items-center gap-2 text-sm">
+                    <span className="muted">Sort by</span>
+                    <select
+                      className="select"
+                      value={sortBy}
+                      onChange={(e) =>
+                        setSortBy(e.target.value as "name" | "population")
+                      }
+                    >
+                      <option value="name">name</option>
+                      <option value="population">population</option>
+                    </select>
+                  </label>
+
+                  <button
+                    type="button"
+                    className="btn"
+                    onClick={() =>
+                      setSortDir((d) => (d === "asc" ? "desc" : "asc"))
+                    }
+                    aria-label="toggle sort direction"
+                  >
+                    {sortDir === "asc" ? "↑ desc" : "↓ asc"}
+                  </button>
+                </div>
+              </div>
+
+              <CountryCard
+                country={activeCountry}
+                selectedYear={selectedYear}
+                population={population}
+              />
+
+              <div className="card">
+                <YearTable rows={rows} />
+              </div>
+            </>
+          ) : (
+            <div className="card text-sm text-slate-300">
+              No results for “{search}”.
+            </div>
+          )}
+        </section>
       </div>
-
-      {hasResults && (
-        <>
-          <label>
-            Year:&nbsp;
-            <select
-              value={selectedYear ?? ""}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-            >
-              {allYears.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Sort by:&nbsp;
-            <select
-              value={sortBy}
-              onChange={(e) =>
-                setSortBy(e.target.value as "name" | "population")
-              }
-            >
-              <option value="name">name</option>
-              <option value="population">population</option>
-            </select>
-          </label>
-
-          <button
-            type="button"
-            onClick={() => setSortDir((d) => (d === "asc" ? "desc" : "asc"))}
-            aria-label="toggle sort direction"
-          >
-            {sortDir === "asc" ? "↑ asc" : "↓ desc"}
-          </button>
-        </>
-      )}
-
-      {!hasResults ? (
-        <p style={{ marginTop: 24 }}>No results for “{search}”.</p>
-      ) : (
-        <>
-          <p>Total countries in dataset: {Object.keys(data).length}</p>
-          <p>
-            Population of {first} in {selectedYear}:{" "}
-            {current?.population ?? "N/A"}
-          </p>
-
-          <ul>
-            {countries.map((name) => (
-              <li key={name}>{name}</li>
-            ))}
-          </ul>
-
-          <table>
-            <thead>
-              <tr>
-                <th>year</th>
-                <th>population</th>
-                <th>co2</th>
-                <th>co2PerCapita</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.year}>
-                  <td>{r.year}</td>
-                  <td>{r.population ?? "N/A"}</td>
-                  <td>{r.co2 ?? "N/A"}</td>
-                  <td>{r.co2PerCapita ?? "N/A"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
     </div>
   );
 }
