@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useCallback } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { Co2Dataset } from "../types/co2";
-import type { YearRecord } from "../types/co2";
+import type { Co2Dataset, YearRecord } from "../types/co2";
+import { getRows, getIso, getContinent } from "../utils/co2";
 import { createCo2Resource } from "../data/resource";
 import { YearTable } from "./YearTable";
 import { CountryCard } from "./CountryCard";
@@ -57,8 +57,8 @@ export function AppContent({
       }
       if (selectedYear == null) return 0;
 
-      const aRows = Array.isArray(data[a]) ? (data[a] as YearRecord[]) : [];
-      const bRows = Array.isArray(data[b]) ? (data[b] as YearRecord[]) : [];
+      const aRows = getRows((data as Co2Dataset)[a]);
+      const bRows = getRows((data as Co2Dataset)[b]);
       const aPop = aRows.find((r) => r.year === selectedYear)?.population;
       const bPop = bRows.find((r) => r.year === selectedYear)?.population;
 
@@ -92,16 +92,26 @@ export function AppContent({
 
   const visibleCountries = useMemo(
     () => countries.slice(0, visibleCount),
-    [countries, visibleCount]
+    [countries, visibleCount],
   );
 
   const key = activeCountry || countries[0] || "";
+  // const rows = useMemo<YearRecord[]>(() => {
+  //   if (!key) {
+  //     return [];
+  //   }
+  //   const value = (data as Co2Dataset)[key];
+  //   return Array.isArray(value) ? (value as YearRecord[]) : [];
+  // }, [data, key]);
+
+  const entry = useMemo(() => {
+    if (!key) return undefined;
+    return (data as Co2Dataset)[key];
+  }, [data, key]);
+
   const rows = useMemo<YearRecord[]>(() => {
-    if (!key) {
-      return [];
-    }
-    const value = (data as Co2Dataset)[key];
-    return Array.isArray(value) ? (value as YearRecord[]) : [];
+    if (!key) return [];
+    return getRows((data as Co2Dataset)[key]);
   }, [data, key]);
 
   const allYears = useMemo(() => {
@@ -123,6 +133,9 @@ export function AppContent({
   const handleShowMore = useCallback(() => {
     setVisibleCount((c: number) => Math.min(c + 20, countries.length));
   }, [countries.length, setVisibleCount]);
+
+  const iso = getIso((data as Co2Dataset)[key]);
+  const continent = getContinent(entry);
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-[300px,1fr]">
@@ -201,9 +214,10 @@ export function AppContent({
             </div>
 
             <CountryCard
-              country={key}
+              country={iso ? `${key} (${iso})` : key}
               selectedYear={selectedYear ?? 0}
               population={population}
+              continent={continent}
             />
 
             <div className="card">

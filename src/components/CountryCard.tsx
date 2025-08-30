@@ -4,9 +4,15 @@ type Props = {
   country: string;
   selectedYear: number;
   population?: number;
+  continent?: string;
 };
 
-function CountryCardBase({ country, selectedYear, population }: Props) {
+function CountryCardBase({
+  country,
+  selectedYear,
+  population,
+  continent,
+}: Props) {
   const prevYear = useRef(selectedYear);
   const [flash, setFlash] = useState(false);
 
@@ -23,6 +29,9 @@ function CountryCardBase({ country, selectedYear, population }: Props) {
   return (
     <div className="card">
       <h2 className="mb-1 text-xl font-semibold text-slate-100">{country}</h2>
+      {continent && (
+        <div className="text-sm text-slate-400">Continent: {continent}</div>
+      )}
       <div className={`text-sm text-slate-300 ${flash ? "flash" : ""}`}>
         Population in {selectedYear}:{" "}
         <span className="font-medium text-slate-50">{population ?? "N/A"}</span>

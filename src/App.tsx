@@ -33,21 +33,21 @@ export default function App() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearch(e.target.value);
     },
-    []
+    [],
   );
 
   const handleYearChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSelectedYear(Number(e.target.value));
     },
-    []
+    [],
   );
 
   const handleSortByChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSortBy(e.target.value as "name" | "population");
     },
-    []
+    [],
   );
 
   const handleSortDirToggle = useCallback(() => {

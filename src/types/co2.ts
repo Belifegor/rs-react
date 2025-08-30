@@ -5,4 +5,12 @@ export type YearRecord = {
   co2_per_capita?: number;
 };
 
-export type Co2Dataset = Record<string, YearRecord[]>;
+export type OwidObject = {
+  iso_code?: string;
+  continent?: string;
+  data: YearRecord[];
+};
+
+export type OwidEntry = YearRecord[] | OwidObject;
+
+export type Co2Dataset = Record<string, OwidEntry>;
