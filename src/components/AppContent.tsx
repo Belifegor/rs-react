@@ -7,7 +7,7 @@ import { YearTable } from "./YearTable";
 import { CountryCard } from "./CountryCard";
 import { CountryList } from "./CountryList";
 import { ColumnModal } from "./ColumnModal";
-import { ALLOWED_EXTRA } from "../data/constants";
+import { ALLOWED_EXTRA, type Region } from "../data/constants";
 
 type ContentProps = {
   resource: ReturnType<typeof createCo2Resource>;
