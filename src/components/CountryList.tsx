@@ -4,7 +4,7 @@ type CountryData = {
   name: string;
   iso?: string;
   population?: number | null;
-}
+};
 
 type Props = {
   countries: CountryData[];
@@ -36,7 +36,6 @@ function CountryListBase({ countries, active, onSelect }: Props) {
                     ? population.toLocaleString("en-US")
                     : "N/A"}
                 </span>
-
               </div>
             </button>
           </li>

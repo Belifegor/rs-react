@@ -23,6 +23,7 @@ type ContentProps = {
   onYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSortByChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSortDirToggle: () => void;
+  selectedColumns: string[];
 };
 
 export function AppContent({
@@ -41,6 +42,7 @@ export function AppContent({
   onYearChange,
   onSortByChange,
   onSortDirToggle,
+  selectedColumns,
 }: ContentProps) {
   const data = resource.read();
 
@@ -144,6 +146,36 @@ export function AppContent({
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-[300px,1fr]">
+      <div className="toolbar">
+        <label className="flex items-center gap-2 text-sm">
+          <span className="muted">Year</span>
+          <select
+            className="select"
+            value={selectedYear ?? ""}
+            onChange={onYearChange}
+          >
+            {allYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <div className="ml-auto flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm">
+            <span className="muted">Sort by</span>
+            <select className="select" value={sortBy} onChange={onSortByChange}>
+              <option value="name">name</option>
+              <option value="population">population</option>
+            </select>
+          </label>
+
+          <button type="button" className="btn" onClick={onSortDirToggle}>
+            {sortDir === "asc" ? "↑ desc" : "↓ asc"}
+          </button>
+        </div>
+      </div>
       <aside className="card">
         <label className="mb-1 block text-sm font-medium text-slate-300">
           Search
@@ -183,41 +215,6 @@ export function AppContent({
       <section className="space-y-4">
         {countries.length ? (
           <>
-            <div className="toolbar">
-              <label className="flex items-center gap-2 text-sm">
-                <span className="muted">Year</span>
-                <select
-                  className="select"
-                  value={selectedYear ?? ""}
-                  onChange={onYearChange}
-                >
-                  {allYears.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <div className="ml-auto flex items-center gap-3">
-                <label className="flex items-center gap-2 text-sm">
-                  <span className="muted">Sort by</span>
-                  <select
-                    className="select"
-                    value={sortBy}
-                    onChange={onSortByChange}
-                  >
-                    <option value="name">name</option>
-                    <option value="population">population</option>
-                  </select>
-                </label>
-
-                <button type="button" className="btn" onClick={onSortDirToggle}>
-                  {sortDir === "asc" ? "↑ desc" : "↓ asc"}
-                </button>
-              </div>
-            </div>
-
             <CountryCard
               country={iso ? `${key} (${iso})` : key}
               selectedYear={selectedYear ?? 0}
@@ -226,7 +223,10 @@ export function AppContent({
             />
 
             <div className="card">
-              <YearTable rows={rows} />
+              <YearTable
+                rows={rows}
+                columns={selectedColumns as (keyof YearRecord)[]}
+              />
             </div>
           </>
         ) : (
