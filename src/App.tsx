@@ -4,12 +4,31 @@ import {
   useCallback,
   useDeferredValue,
   Suspense,
+  Profiler,
 } from "react";
 import { createCo2Resource } from "./data/resource";
 import { MainSkeleton } from "./components/Skeletons";
 import { AppContent } from "./components/AppContent";
 import { type Region } from "./data/constants";
 import "./index.css";
+
+const logProfile: React.ProfilerOnRenderCallback = (
+  id,
+  phase,
+  actualDuration,
+  baseDuration,
+  startTime,
+  commitTime,
+) => {
+  console.log({
+    id,
+    startTime,
+    phase,
+    actualDuration,
+    baseDuration,
+    commitTime,
+  });
+};
 
 export default function App() {
   const DATA_URL =
@@ -70,28 +89,29 @@ export default function App() {
           <h1>CO₂ Emissions Data</h1>
         </div>
       </header>
-
-      <Suspense fallback={<MainSkeleton />}>
-        <AppContent
-          resource={resource}
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
-          search={search}
-          normalizedSearch={normalizedSearch}
-          sortBy={sortBy}
-          sortDir={sortDir}
-          activeCountry={activeCountry}
-          visibleCount={visibleCount}
-          setVisibleCount={setVisibleCount}
-          onSelectCountry={handleSelectCountry}
-          onSearchChange={handleSearchChange}
-          onYearChange={handleYearChange}
-          onSortByChange={handleSortByChange}
-          onSortDirToggle={handleSortDirToggle}
-          region={region}
-          onRegionChange={handleRegionChange}
-        />
-      </Suspense>
+      <Profiler id="AppContent" onRender={logProfile}>
+        <Suspense fallback={<MainSkeleton />}>
+          <AppContent
+            resource={resource}
+            selectedYear={selectedYear}
+            setSelectedYear={setSelectedYear}
+            search={search}
+            normalizedSearch={normalizedSearch}
+            sortBy={sortBy}
+            sortDir={sortDir}
+            activeCountry={activeCountry}
+            visibleCount={visibleCount}
+            setVisibleCount={setVisibleCount}
+            onSelectCountry={handleSelectCountry}
+            onSearchChange={handleSearchChange}
+            onYearChange={handleYearChange}
+            onSortByChange={handleSortByChange}
+            onSortDirToggle={handleSortDirToggle}
+            region={region}
+            onRegionChange={handleRegionChange}
+          />
+        </Suspense>
+      </Profiler>
     </div>
   );
 }

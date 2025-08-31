@@ -8,7 +8,6 @@ import { CountryCard } from "./CountryCard";
 import { CountryList } from "./CountryList";
 import { ColumnModal } from "./ColumnModal";
 import { ALLOWED_EXTRA } from "../data/constants";
-import { type Region, REGIONS } from "../data/constants";
 
 type ContentProps = {
   resource: ReturnType<typeof createCo2Resource>;
