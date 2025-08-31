@@ -66,7 +66,11 @@ export const YearTable = memo(function YearTable({
         ))}
       </div>
 
-      <div ref={parentRef} className="overflow-y-auto" style={{ height }}>
+      <div
+        ref={parentRef}
+        className="overflow-y-auto scrollbar"
+        style={{ height }}
+      >
         <div
           style={{
             height: rowVirtualizer.getTotalSize(),

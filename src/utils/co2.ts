@@ -1,4 +1,5 @@
 import type { YearRecord, OwidObject } from "../types/co2";
+import { ISO_TO_CONTINENT } from "../data/iso-continent";
 
 function isRecord(x: unknown): x is Record<string, unknown> {
   return typeof x === "object" && x !== null;
@@ -32,6 +33,12 @@ export function getIso(entry: unknown): string | undefined {
 
 export function getContinent(entry: unknown): string | undefined {
   if (!isRecord(entry)) return undefined;
+
+  const iso = getIso(entry);
+  if (iso && ISO_TO_CONTINENT[iso]) {
+    return ISO_TO_CONTINENT[iso];
+  }
+
   const v = (entry as { continent?: unknown }).continent;
   return typeof v === "string" ? v : undefined;
 }

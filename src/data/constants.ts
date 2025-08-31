@@ -14,3 +14,24 @@ export const ALLOWED_EXTRA: (keyof YearRecord)[] = [
   "total_ghg",
   "primary_energy_consumption",
 ];
+
+export type Region =
+  | "all"
+  | "Africa"
+  | "Asia"
+  | "Europe"
+  | "North America"
+  | "South America"
+  | "Oceania"
+  | "Antarctica";
+
+export const REGIONS: Region[] = [
+  "all",
+  "Africa",
+  "Asia",
+  "Europe",
+  "North America",
+  "South America",
+  "Oceania",
+  "Antarctica",
+];

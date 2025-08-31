@@ -8,6 +8,7 @@ import { CountryCard } from "./CountryCard";
 import { CountryList } from "./CountryList";
 import { ColumnModal } from "./ColumnModal";
 import { ALLOWED_EXTRA } from "../data/constants";
+import { type Region, REGIONS } from "../data/constants";
 
 type ContentProps = {
   resource: ReturnType<typeof createCo2Resource>;
@@ -25,6 +26,8 @@ type ContentProps = {
   onYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSortByChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSortDirToggle: () => void;
+  region: Region;
+  onRegionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 };
 
 export function AppContent({
@@ -43,6 +46,8 @@ export function AppContent({
   onYearChange,
   onSortByChange,
   onSortDirToggle,
+  region,
+  onRegionChange,
 }: ContentProps) {
   const data = resource.read();
 
@@ -52,29 +57,36 @@ export function AppContent({
   const BASE_COLS = useMemo(
     () =>
       ["year", "population", "co2", "co2_per_capita"] as (keyof YearRecord)[],
-    []
+    [],
   );
 
   const countries = useMemo(() => {
     const names = Object.keys(data);
+
+    const byRegion = names.filter((countryKey) => {
+      if (region === "all") return true;
+      const entry = (data as Co2Dataset)[countryKey];
+      const c = getContinent(entry);
+      if (!getIso(entry)) return false;
+      return typeof c === "string" && c.toLowerCase() === region.toLowerCase();
+    });
+
     const filtered = normalizedSearch
-      ? names.filter((n) => n.toLowerCase().includes(normalizedSearch))
-      : names;
+      ? byRegion.filter((n) => n.toLowerCase().includes(normalizedSearch))
+      : byRegion;
 
     const enrichedCountries = filtered.map((name) => {
       const entry = (data as Co2Dataset)[name];
       const countryRows = getRows(entry);
-      let population: number | undefined | null = null;
-
       const yearToFind = selectedYear ?? countryRows.at(-1)?.year;
-
-      if (yearToFind) {
-        population = countryRows.find((r) => r.year === yearToFind)?.population;
-      }
+      const population =
+        yearToFind != null
+          ? (countryRows.find((r) => r.year === yearToFind)?.population ?? null)
+          : null;
 
       return {
         name,
-        population: population ?? null,
+        population: population,
         iso: getIso(entry),
       };
     });
@@ -94,11 +106,11 @@ export function AppContent({
     });
 
     return enrichedCountries;
-  }, [data, normalizedSearch, sortBy, sortDir, selectedYear]);
+  }, [data, region, normalizedSearch, sortBy, sortDir, selectedYear]);
 
   useEffect(() => {
     setVisibleCount(20);
-  }, [normalizedSearch, setVisibleCount]);
+  }, [normalizedSearch, region, setVisibleCount]);
 
   useEffect(() => {
     if (countries.length === 0) {
@@ -115,7 +127,7 @@ export function AppContent({
 
   const visibleCountries = useMemo(
     () => countries.slice(0, visibleCount),
-    [countries, visibleCount]
+    [countries, visibleCount],
   );
 
   const key = activeCountry || countries[0]?.name || "";
@@ -149,7 +161,7 @@ export function AppContent({
 
   const tableColumns = useMemo<(keyof YearRecord)[]>(
     () => [...BASE_COLS, ...Array.from(extraCols)],
-    [BASE_COLS, extraCols]
+    [BASE_COLS, extraCols],
   );
 
   useEffect(() => {
@@ -157,6 +169,10 @@ export function AppContent({
       setSelectedYear(allYears[allYears.length - 1]);
     }
   }, [selectedYear, allYears, setSelectedYear]);
+
+  useEffect(() => {
+    setVisibleCount(20);
+  }, [region, setVisibleCount]);
 
   const population =
     selectedYear != null
@@ -180,7 +196,7 @@ export function AppContent({
   }, [countries.length, setVisibleCount]);
 
   const iso = getIso((data as Co2Dataset)[key]);
-  const continent = getContinent(entry);
+  const continent = entry ? getContinent(entry) : undefined;
 
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-[300px,1fr]">
@@ -199,7 +215,16 @@ export function AppContent({
             ))}
           </select>
         </label>
-
+        <label className="flex items-center gap-2 text-sm">
+          <span className="muted">Region</span>
+          <select className="select" value={region} onChange={onRegionChange}>
+            {REGIONS.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
+        </label>
         <div className="ml-auto flex items-center gap-3">
           <label className="flex items-center gap-2 text-sm">
             <span className="muted">Sort by</span>
@@ -264,7 +289,7 @@ export function AppContent({
             />
 
             <div className="card">
-              <YearTable rows={rows} columns={tableColumns} />
+              <YearTable rows={[...rows].reverse()} columns={tableColumns} />
             </div>
           </>
         ) : (

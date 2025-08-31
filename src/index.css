@@ -55,4 +55,34 @@
     background: rgba(250, 204, 21, 0.18);
     transition: background 1s;
   }
+
+  .scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #475569 transparent;
+  }
+  .scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+    background-clip: content-box;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 }

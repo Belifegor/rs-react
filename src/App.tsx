@@ -8,6 +8,7 @@ import {
 import { createCo2Resource } from "./data/resource";
 import { MainSkeleton } from "./components/Skeletons";
 import { AppContent } from "./components/AppContent";
+import { type Region } from "./data/constants";
 import "./index.css";
 
 export default function App() {
@@ -21,9 +22,17 @@ export default function App() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [activeCountry, setActiveCountry] = useState<string>("");
   const [visibleCount, setVisibleCount] = useState(20);
+  const [region, setRegion] = useState<Region>("all");
 
   const deferredSearch = useDeferredValue(search);
   const normalizedSearch = deferredSearch.trim().toLowerCase();
+
+  const handleRegionChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setRegion(e.target.value as Region);
+    },
+    [],
+  );
 
   const handleSelectCountry = useCallback((name: string) => {
     setActiveCountry(name);
@@ -79,6 +88,8 @@ export default function App() {
           onYearChange={handleYearChange}
           onSortByChange={handleSortByChange}
           onSortDirToggle={handleSortDirToggle}
+          region={region}
+          onRegionChange={handleRegionChange}
         />
       </Suspense>
     </div>
