@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { Co2Dataset, YearRecord } from "../types/co2";
 import { getRows, getIso, getContinent } from "../utils/co2";
@@ -6,6 +6,8 @@ import { createCo2Resource } from "../data/resource";
 import { YearTable } from "./YearTable";
 import { CountryCard } from "./CountryCard";
 import { CountryList } from "./CountryList";
+import { ColumnModal } from "./ColumnModal";
+import { ALLOWED_EXTRA } from "../data/constants";
 
 type ContentProps = {
   resource: ReturnType<typeof createCo2Resource>;
@@ -23,7 +25,6 @@ type ContentProps = {
   onYearChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSortByChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onSortDirToggle: () => void;
-  selectedColumns: string[];
 };
 
 export function AppContent({
@@ -42,9 +43,17 @@ export function AppContent({
   onYearChange,
   onSortByChange,
   onSortDirToggle,
-  selectedColumns,
 }: ContentProps) {
   const data = resource.read();
+
+  const [isColsOpen, setColsOpen] = useState(false);
+  const [extraCols, setExtraCols] = useState<Set<keyof YearRecord>>(new Set());
+
+  const BASE_COLS = useMemo(
+    () =>
+      ["year", "population", "co2", "co2_per_capita"] as (keyof YearRecord)[],
+    []
+  );
 
   const countries = useMemo(() => {
     const names = Object.keys(data);
@@ -126,6 +135,23 @@ export function AppContent({
     return [...new Set(rows.map((r) => r.year))].sort((a, b) => a - b);
   }, [rows]);
 
+  const availableCols = useMemo<(keyof YearRecord)[]>(() => {
+    const s = new Set<keyof YearRecord>();
+    for (const r of rows) {
+      for (const k of Object.keys(r) as (keyof YearRecord)[]) {
+        if (ALLOWED_EXTRA.includes(k)) {
+          s.add(k);
+        }
+      }
+    }
+    return [...s];
+  }, [rows]);
+
+  const tableColumns = useMemo<(keyof YearRecord)[]>(
+    () => [...BASE_COLS, ...Array.from(extraCols)],
+    [BASE_COLS, extraCols]
+  );
+
   useEffect(() => {
     if (selectedYear == null && allYears.length > 0) {
       setSelectedYear(allYears[allYears.length - 1]);
@@ -136,6 +162,18 @@ export function AppContent({
     selectedYear != null
       ? rows.find((r) => r.year === selectedYear)?.population
       : undefined;
+
+  const openColumns = useCallback(() => setColsOpen(true), []);
+  const closeColumns = useCallback(() => setColsOpen(false), []);
+  const toggleExtra = useCallback((key: keyof YearRecord) => {
+    setExtraCols((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }, []);
+  const clearExtras = useCallback(() => setExtraCols(new Set()), []);
 
   const handleShowMore = useCallback(() => {
     setVisibleCount((c: number) => Math.min(c + 20, countries.length));
@@ -170,6 +208,9 @@ export function AppContent({
               <option value="population">population</option>
             </select>
           </label>
+          <button type="button" className="btn" onClick={openColumns}>
+            Columns{extraCols.size ? ` (+${extraCols.size})` : ""}
+          </button>
 
           <button type="button" className="btn" onClick={onSortDirToggle}>
             {sortDir === "asc" ? "↑ desc" : "↓ asc"}
@@ -223,16 +264,23 @@ export function AppContent({
             />
 
             <div className="card">
-              <YearTable
-                rows={rows}
-                columns={selectedColumns as (keyof YearRecord)[]}
-              />
+              <YearTable rows={rows} columns={tableColumns} />
             </div>
           </>
         ) : (
           <div className="card text-sm text-slate-300">No results.</div>
         )}
       </section>
+      {isColsOpen && (
+        <ColumnModal
+          isOpen={isColsOpen}
+          all={availableCols}
+          selected={extraCols}
+          onToggle={toggleExtra}
+          onClear={clearExtras}
+          onClose={closeColumns}
+        />
+      )}
     </div>
   );
 }

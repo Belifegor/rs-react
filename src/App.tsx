@@ -21,12 +21,6 @@ export default function App() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [activeCountry, setActiveCountry] = useState<string>("");
   const [visibleCount, setVisibleCount] = useState(20);
-  const [selectedColumns] = useState([
-    "year",
-    "population",
-    "co2",
-    "co2_per_capita",
-  ]);
 
   const deferredSearch = useDeferredValue(search);
   const normalizedSearch = deferredSearch.trim().toLowerCase();
@@ -39,21 +33,21 @@ export default function App() {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearch(e.target.value);
     },
-    []
+    [],
   );
 
   const handleYearChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSelectedYear(Number(e.target.value));
     },
-    []
+    [],
   );
 
   const handleSortByChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       setSortBy(e.target.value as "name" | "population");
     },
-    []
+    [],
   );
 
   const handleSortDirToggle = useCallback(() => {
@@ -85,7 +79,6 @@ export default function App() {
           onYearChange={handleYearChange}
           onSortByChange={handleSortByChange}
           onSortDirToggle={handleSortDirToggle}
-          selectedColumns={selectedColumns}
         />
       </Suspense>
     </div>
