@@ -50,30 +50,39 @@ export function AppContent({
       ? names.filter((n) => n.toLowerCase().includes(normalizedSearch))
       : names;
 
-    const sorted = [...filtered].sort((a, b) => {
+    const enrichedCountries = filtered.map((name) => {
+      const entry = (data as Co2Dataset)[name];
+      const countryRows = getRows(entry);
+      let population: number | undefined | null = null;
+
+      const yearToFind = selectedYear ?? countryRows.at(-1)?.year;
+
+      if (yearToFind) {
+        population = countryRows.find((r) => r.year === yearToFind)?.population;
+      }
+
+      return {
+        name,
+        population: population ?? null,
+        iso: getIso(entry),
+      };
+    });
+
+    enrichedCountries.sort((a, b) => {
       if (sortBy === "name") {
-        const cmp = a.localeCompare(b);
+        const cmp = a.name.localeCompare(b.name);
         return sortDir === "asc" ? cmp : -cmp;
       }
-      if (selectedYear == null) return 0;
 
-      const aRows = getRows((data as Co2Dataset)[a]);
-      const bRows = getRows((data as Co2Dataset)[b]);
-      const aPop = aRows.find((r) => r.year === selectedYear)?.population;
-      const bPop = bRows.find((r) => r.year === selectedYear)?.population;
+      if (a.population === null && b.population === null) return 0;
+      if (a.population === null) return 1;
+      if (b.population === null) return -1;
 
-      if (aPop == null && bPop == null) {
-        const byName = a.localeCompare(b);
-        return sortDir === "asc" ? byName : -byName;
-      }
-      if (aPop == null) return 1;
-      if (bPop == null) return -1;
-
-      const cmp = aPop - bPop;
+      const cmp = a.population - b.population;
       return sortDir === "asc" ? cmp : -cmp;
     });
 
-    return sorted;
+    return enrichedCountries;
   }, [data, normalizedSearch, sortBy, sortDir, selectedYear]);
 
   useEffect(() => {
@@ -85,24 +94,20 @@ export function AppContent({
       if (activeCountry !== "") onSelectCountry("");
       return;
     }
-    if (!activeCountry || !countries.includes(activeCountry)) {
-      onSelectCountry(countries[0]);
+
+    const isCountryInList = countries.some((c) => c.name === activeCountry);
+
+    if (!activeCountry || !isCountryInList) {
+      onSelectCountry(countries[0].name);
     }
   }, [countries, activeCountry, onSelectCountry]);
 
   const visibleCountries = useMemo(
     () => countries.slice(0, visibleCount),
-    [countries, visibleCount],
+    [countries, visibleCount]
   );
 
-  const key = activeCountry || countries[0] || "";
-  // const rows = useMemo<YearRecord[]>(() => {
-  //   if (!key) {
-  //     return [];
-  //   }
-  //   const value = (data as Co2Dataset)[key];
-  //   return Array.isArray(value) ? (value as YearRecord[]) : [];
-  // }, [data, key]);
+  const key = activeCountry || countries[0]?.name || "";
 
   const entry = useMemo(() => {
     if (!key) return undefined;
